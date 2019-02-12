@@ -27,11 +27,23 @@ const style = {
 };
 
 class Home extends React.Component {
-    state = { age: null, selectedDate: null };
+    state = { age: null, selectedDate: null, getVehicleDataKey: null, numVehiclesDataKey: null, vehiclesCount: 0};
+
+    getVehicles = () => {
+        for(let i=0; i< this.vehiclesCount; i++) {
+            console.log('lol');
+        }
+    }
 
     componentDidMount() {
         const pic = require('./blank.jpg');
         const dateAndTimePicker = this.props.dateAndTimePicker;
+        const { drizzle, drizzleState } = this.props;
+        const contract = drizzle.contracts.Rideshare;
+        const getVehicleDataKey = contract.methods["getVehicleList"].cacheCall();
+        const numVehiclesDataKey = contract.methods["getVehiclesCount"].cacheCall();
+        this.setState({ getVehicleDataKey });
+        this.setState({ numVehiclesDataKey });
     };
 
 
@@ -40,8 +52,13 @@ class Home extends React.Component {
     };
 
     render() {
+        const { Rideshare } = this.props.drizzleState.contracts;
+        const res = Rideshare.getVehicleList[this.state.getVehicleDataKey];
+        const vehiclesCount = Rideshare.getVehiclesCount[this.numVehiclesDataKey];
+        console.log(res && res.value);
+        console.log(res && res.length);
         return (
-            <Grid container md={12} style={style.wrapper}>
+            <Grid container style={style.wrapper}>
                 <Grid container style={style.SearchGrid} space={9}>
                     <Grid item xs={2}>
                         <TextField

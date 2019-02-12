@@ -39,8 +39,8 @@ class App extends Component {
         <NavBar/>
         {/* <RegisterVehicle drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/> */}
         {/* <Login drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/> */}
-        {/* <Home DateAndTimePickers={this.props.DateAndTimePickers}/> */}
-        <VehicleInfo/>
+        <Home drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} DateAndTimePickers={this.props.DateAndTimePickers}/>
+        {/* <VehicleInfo drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/> */}
       </div>
     );
   }

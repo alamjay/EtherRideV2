@@ -20,10 +20,9 @@ contract Rideshare {
     struct Rental {
         address driver;
         address vehicle;
-        uint start_date;
-        uint end_date;
-        uint start_time;
-        uint end_time;
+        string start_date_time;
+        string end_date_time;
+        string location;
     }
     
     // Status of the vehicle 
@@ -37,6 +36,9 @@ contract Rideshare {
     
     // mapping to store the users
     mapping (address => User) users;
+    
+    // number of vehicles
+    uint public numVehicles;
     
     // sequence number of rentals
     uint rentalseq;
@@ -63,17 +65,16 @@ contract Rideshare {
     function setHire(
         address driver,
         address vehicle,   // vehicle is the same as owner's key
-        uint start_date, 
-        uint end_date, 
-        uint start_time, 
-        uint end_time
+        string memory start_date_time, 
+        string memory end_date_time, 
+        string memory location
     ) public payable  {
         rentalseq++;
 
-        rentals[rentalseq] = Rental(driver, vehicle, start_date, end_date, start_time, end_time);
+        rentals[rentalseq] = Rental(driver, vehicle, start_date_time, end_date_time, location);
     }
     
-    function getHire(uint rentalNo) public view returns (address, address, uint, uint, uint, string memory) {
+    function getHire(uint rentalNo) public view returns (address, address, string memory, string memory, uint, string memory) {
         
         address vehicle = rentals[rentalNo].vehicle;
         Vehicle memory vehicleInfo = vehicles[vehicle];
@@ -81,15 +82,17 @@ contract Rideshare {
         return ( 
             rentals[rentalNo].driver,
             rentals[rentalNo].vehicle, 
-            rentals[rentalNo].start_date, 
-            rentals[rentalNo].end_date,
+            rentals[rentalNo].start_date_time, 
+            rentals[rentalNo].end_date_time,
             vehicleInfo.price,
-            vehicleInfo.location
+            vehicleInfo.location // or is it rentals[rentalNo].location?
         );
     }
 
     // register the vehicle onto the blockhain    
     function setVehicle(address owner, string memory make, string memory model, uint price, string memory location) public {
+        numVehicles++;
+
         Vehicle storage vehicle = vehicles[owner];
         
         vehicle.make = make;
@@ -104,5 +107,12 @@ contract Rideshare {
         return (vehicles[owner].make, vehicles[owner].model, vehicles[owner].price, vehicles[owner].location);
     }
     
+    function getVehicleList() public view returns (address[] memory vehicles) {
+        return vehicleAccts;
+    }
+    
+    function getVehiclesCount() public view returns (uint) {
+        return numVehicles;
+    }
 
 }

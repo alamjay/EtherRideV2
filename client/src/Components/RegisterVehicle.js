@@ -38,7 +38,11 @@ class RegisterVehicle extends React.Component {
     render() {
         const { Rideshare } = this.props.drizzleState.contracts;
         const res = Rideshare.getVehicle[this.state.dataKey];
+        // console.log('RegisterVehicle');
         console.log(res && res.value);
+        // console.log('data key');
+        // console.log(res);
+
         return (
             <div>
                 <form

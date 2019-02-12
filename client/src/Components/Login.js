@@ -68,11 +68,11 @@ class Login extends React.Component {
             <label>First Name</label>
                 <TextField id="firstName" onKeyDown={e => this.onRegister(e)}/>
                 <label>Last Name</label>
-                <TextField id="lastName"/>
+                <TextField id="lastName"onKeyDown={e => this.onRegister(e)}/>
                 <label>Email</label>
-                <TextField id="email"/>
+                <TextField id="email" onKeyDown={e => this.onRegister(e)}/>
                 <label>Password</label>
-                <TextField id="password"/>
+                <TextField id="password" onKeyDown={e => this.onRegister(e)}/>
             </form>
             <br/>
             </div>
