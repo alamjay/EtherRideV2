@@ -9,10 +9,16 @@ import Home from "./Components/Home/Home";
 import VehicleInfo from "./Components/Home/VehicleInfo";
 import VehicleInfoWrapped from "./Components/Home/VehicleInfo";
 import { withStyles } from '@material-ui/core/styles';
-import HelloWorld from './Components/HelloWorld'
 
 class App extends Component {
-  state = { loading: true, drizzleState: null};
+  state = { loading: true, drizzleState: null, openModal: false };
+
+  onModalOpen = () => {
+    // this.setState( { openModal: isOpen });
+    this.setState( state => ({
+      openModal: !state.openModal
+    }));
+  }
 
   componentDidMount() {
     const { drizzle } = this.props;
@@ -33,15 +39,24 @@ class App extends Component {
     this.unsubscribe();
   }
 
-  render() { 
+  render() {
     if (this.state.loading) return "Loading Drizzle...";
     return (
       <div className="App">
-        <NavBar/>
+        <NavBar />
         <RegisterVehicle drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/>
         {/* <Login drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/> */}
-        <Home drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} DateAndTimePickers={this.props.DateAndTimePickers}/>
-        {/* <VehicleInfo drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/> */}
+        <Home 
+        drizzle={this.props.drizzle} 
+        drizzleState={this.state.drizzleState} 
+        DateAndTimePickers={this.props.DateAndTimePickers} 
+        onModal={this.onModalOpen} />
+        <VehicleInfo 
+        drizzle={this.props.drizzle} 
+        drizzleState={this.state.drizzleState} 
+        requestModal={this.onModalOpen} 
+        openModal={this.state.openModal}/>
+        {/* <button onClick={this.onModalOpen}>Clic kme</button> */}
       </div>
     );
   }

@@ -49,14 +49,21 @@ class VehicleInfo extends React.Component {
         const getVehicleDataKey = contract.methods["getVehicle"].cacheCall(drizzleState.accounts[0]);
         this.setState({ getHireDataKey });
         this.setState({ getVehicleDataKey });
+        // this.setState({ open: true });
     }
+    
+    // UNSAFE_componentWillReceiveProps(newProps) {
+    //     this.setState({ open: newProps.requestModal });
+    // }
 
-    handleOpen = () => {
-        this.setState({ open: true });
-    };
+    // handleOpen = () => {
+    //     console.log(this.props.requestModal);
+    //     this.setState({ open: this.props.requestModal });
+    // };
 
     handleClose = () => {
-        this.setState({ open: false });
+        // this.setState({ open: false });
+        this.props.requestModal(false);
     };
 
     handleChange = e => {
@@ -80,6 +87,8 @@ class VehicleInfo extends React.Component {
     }
 
     render() {
+        // this.props.requestModal
+
         const { classes } = this.props;
         const { value } = this.state;
 
@@ -87,16 +96,16 @@ class VehicleInfo extends React.Component {
         const res = Rideshare.getHire[this.state.getHireDataKey];
         const resveh = Rideshare.getVehicleList[this.state.getVehicleDataKey];
         // console.log(res && res.value);
-        console.log(resveh && resveh.value);
+        // console.log(resveh && resveh.value);
         // const list = drizzle.contracts.Rideshare.methods.getVehicleList.cacheCall();
 
         return (
             <div className={classes.root}>
-                <Button onClick={this.handleOpen}>Open Modal</Button>
+                {/* <Button onClick={this.handleOpen}>Open Modal</Button> */}
                 <Modal
                     aria-labelledby="simple-modal-title"
                     aria-describedby="simple-modal-description"
-                    open={this.state.open}
+                    open={this.props.openModal}
                     onClose={this.handleClose}
                     style={{ alignItems: 'center', justifyContent: 'center' }}
                 >

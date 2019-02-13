@@ -16,6 +16,7 @@ import {
     Typography
 } from "@material-ui/core";
 import CarCard from './CarCard';
+import VehicleInfo from "./VehicleInfo";
 
 const style = {
     SearchGrid: { position: "relative", marginTop: 20 },
@@ -27,7 +28,7 @@ const style = {
 };
 
 class Home extends React.Component {
-    state = { age: null, selectedDate: null, 
+    state = { open: false, age: null, selectedDate: null, 
         getVehicleListDataKey: null, getVehicleDataKey: null, numVehiclesDataKey: null, 
         vehiclesCount: 1, vehicles: []};
 
@@ -38,19 +39,17 @@ class Home extends React.Component {
         vehicle.price = data[3];
         vehicle.location = data[4];
         this.state.vehicles.push(vehicle);
-        console.log(this.state.vehicles);
     }
 
-    // getVehicles = (vehiclesCount) => {
-    //     for(let i=0; i<vehiclesCount; i++) {
-    //         this.getVehicle(this.props.drizzleState.accounts[0]);
-    //     }
-    // }
+    showVehicle = () => {
+        for (let i=0; i<this.state.vehicles.length; i++) {
+            return <CarCard vehicle={this.state.vehicles[i]} openModal={this.onVehicleInfo}/>
+        }
+    }
 
-    // getVehicle = (vehicleID) => {
-    //     const { Rideshare } = this.props.drizzleState.contracts;
-    //     const res = Rideshare.getVehicle[this.state.getVehicleDataKey];
-    // }
+    onVehicleInfo = () => {
+        this.props.onModal();
+    }
 
     componentDidMount() {
         const pic = require('./blank.jpg');
@@ -65,6 +64,7 @@ class Home extends React.Component {
             // this.setState({  });
             this.saveVehicle(event.returnValues);
         });
+        // this.saveVehicle( ['', 'BMW', 'M3', 1, 'harlow' ] );
     };
 
     componentWillUnmount() {
@@ -82,6 +82,7 @@ class Home extends React.Component {
         // console.log(res && res.value); // same as console.log(res ? res.value: null);
 
         return (
+            <div>
             <Grid container style={style.wrapper}>
                 <Grid container style={style.SearchGrid} space={9}>
                     <Grid item xs={2}>
@@ -118,17 +119,13 @@ class Home extends React.Component {
                 <Grid container space={12} style={style.resultGrid}>
                     {/* <Grid md={12}> */}
                         <Grid item md={3}>
-                            <CarCard/>
-                        </Grid>
-                        <Grid item md={3}>
-                            <CarCard/>
-                        </Grid>
-                        <Grid item md={3}>
-                            <CarCard/>
+                            {this.showVehicle()}
+                            {/* <CarCard vehicle={this.state.vehicles[0]} openModal={this.onVehicleInfo}/> */}
                         </Grid>
                     {/* </Grid> */}
                 </Grid>
             </Grid>
+            </div>
         );
     }
 };
