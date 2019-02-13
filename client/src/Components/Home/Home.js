@@ -27,33 +27,44 @@ const style = {
 };
 
 class Home extends React.Component {
-    state = { age: null, selectedDate: null, getVehicleDataKey: null, numVehiclesDataKey: null, vehiclesCount: 1};
+    state = { age: null, selectedDate: null, 
+        getVehicleListDataKey: null, getVehicleDataKey: null, numVehiclesDataKey: null, 
+        vehiclesCount: 1, vehicles: []};
 
-    getVehicles = (vehiclesCount) => {
-        for(let i=0; i<vehiclesCount; i++) {
-            this.getVehicle(this.props.drizzleState.accounts[0]);
-        }
+    saveVehicle = (data) => {
+        const vehicle = { make: '', model: '', price: 0, location: '' };
+        vehicle.make = data[1];
+        vehicle.model = data[2];
+        vehicle.price = data[3];
+        vehicle.location = data[4];
+        this.state.vehicles.push(vehicle);
+        console.log(this.state.vehicles);
     }
 
-    getVehicle = (vehicleID) => {
-        const { Rideshare } = this.props.drizzleState.contracts;
-        const res = Rideshare.getVehicle[this.state.getVehicleDataKey];
-        //  datakey = this.props.drizzle.contracts.Rideshare.methods.getVehicle.cacheCall(vehicleID);
-        // const veh = this.props.drizzle.contracts.Rideshare.methods.getVehicleList().call;
-        console.log(res && res.value);    
-    }
+    // getVehicles = (vehiclesCount) => {
+    //     for(let i=0; i<vehiclesCount; i++) {
+    //         this.getVehicle(this.props.drizzleState.accounts[0]);
+    //     }
+    // }
+
+    // getVehicle = (vehicleID) => {
+    //     const { Rideshare } = this.props.drizzleState.contracts;
+    //     const res = Rideshare.getVehicle[this.state.getVehicleDataKey];
+    // }
 
     componentDidMount() {
         const pic = require('./blank.jpg');
         const dateAndTimePicker = this.props.dateAndTimePicker;
         const { drizzle, drizzleState } = this.props;
         const contract = drizzle.contracts.Rideshare;
-        const getVehicleDataKey = contract.methods["getVehicleList"].cacheCall();
-        // const numVehiclesDataKey = contract.methods["getVehiclesCount"].cacheCall();
-        this.setState({ getVehicleDataKey });
-        // this.setState({ numVehiclesDataKey });
-        // const vehicleCount = drizzleState.contracts.Rideshare.getVehiclesCount[this.state.getVehicleDataKey];
-        this.getVehicles(1);
+        const getVehicleListDataKey = contract.methods["getVehicleList"].cacheCall();
+        this.setState({ getVehicleListDataKey });
+
+        drizzle.contracts.Rideshare.events.getVeh().on('data', event => {
+            // console.log(event.returnValues);
+            // this.setState({  });
+            this.saveVehicle(event.returnValues);
+        });
     };
 
     componentWillUnmount() {
@@ -68,12 +79,8 @@ class Home extends React.Component {
     render() {
         const { Rideshare } = this.props.drizzleState.contracts;
         const res = Rideshare.getVehicleList[this.state.getVehicleDataKey];
-        // let vehiclesCount = Rideshare.getVehiclesCount[this.state.numVehiclesDataKey];
         // console.log(res && res.value); // same as console.log(res ? res.value: null);
 
-        // for(let i=0; i< vehiclesCount.value; i++) {
-            // console.log(vehiclesCount && vehiclesCount.value);
-        // }
         return (
             <Grid container style={style.wrapper}>
                 <Grid container style={style.SearchGrid} space={9}>

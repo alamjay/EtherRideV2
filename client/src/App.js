@@ -38,7 +38,7 @@ class App extends Component {
     return (
       <div className="App">
         <NavBar/>
-        {/* <RegisterVehicle drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/> */}
+        <RegisterVehicle drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/>
         {/* <Login drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/> */}
         <Home drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} DateAndTimePickers={this.props.DateAndTimePickers}/>
         {/* <VehicleInfo drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/> */}

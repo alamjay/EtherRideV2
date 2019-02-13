@@ -24,6 +24,14 @@ contract Rideshare {
         string end_date_time;
         string location;
     }
+
+    event getVeh (
+        address indexed _id,
+        string _make,
+        string _model,
+        uint _price,
+        string _location
+    );
     
     // Status of the vehicle 
     enum VehicleState { active, inactive, idle }
@@ -99,6 +107,8 @@ contract Rideshare {
         vehicle.model = model;
         vehicle.price = price;
         vehicle.location = location;
+
+        emit getVeh(owner, make, model, price, location);
         
         vehicleAccts.push(owner) -1;
     }
