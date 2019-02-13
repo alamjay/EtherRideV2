@@ -38,7 +38,7 @@ contract Rideshare {
     mapping (address => User) users;
     
     // number of vehicles
-    uint public numVehicles;
+    uint public numVehicles = 0;
     
     // sequence number of rentals
     uint rentalseq;

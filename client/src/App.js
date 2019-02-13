@@ -9,6 +9,7 @@ import Home from "./Components/Home/Home";
 import VehicleInfo from "./Components/Home/VehicleInfo";
 import VehicleInfoWrapped from "./Components/Home/VehicleInfo";
 import { withStyles } from '@material-ui/core/styles';
+import HelloWorld from './Components/HelloWorld'
 
 class App extends Component {
   state = { loading: true, drizzleState: null};

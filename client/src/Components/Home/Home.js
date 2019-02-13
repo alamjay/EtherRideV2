@@ -27,12 +27,20 @@ const style = {
 };
 
 class Home extends React.Component {
-    state = { age: null, selectedDate: null, getVehicleDataKey: null, numVehiclesDataKey: null, vehiclesCount: 0};
+    state = { age: null, selectedDate: null, getVehicleDataKey: null, numVehiclesDataKey: null, vehiclesCount: 1};
 
-    getVehicles = () => {
-        for(let i=0; i< this.vehiclesCount; i++) {
-            console.log('lol');
+    getVehicles = (vehiclesCount) => {
+        for(let i=0; i<vehiclesCount; i++) {
+            this.getVehicle(this.props.drizzleState.accounts[0]);
         }
+    }
+
+    getVehicle = (vehicleID) => {
+        const { Rideshare } = this.props.drizzleState.contracts;
+        const res = Rideshare.getVehicle[this.state.getVehicleDataKey];
+        //  datakey = this.props.drizzle.contracts.Rideshare.methods.getVehicle.cacheCall(vehicleID);
+        // const veh = this.props.drizzle.contracts.Rideshare.methods.getVehicleList().call;
+        console.log(res && res.value);    
     }
 
     componentDidMount() {
@@ -41,10 +49,16 @@ class Home extends React.Component {
         const { drizzle, drizzleState } = this.props;
         const contract = drizzle.contracts.Rideshare;
         const getVehicleDataKey = contract.methods["getVehicleList"].cacheCall();
-        const numVehiclesDataKey = contract.methods["getVehiclesCount"].cacheCall();
+        // const numVehiclesDataKey = contract.methods["getVehiclesCount"].cacheCall();
         this.setState({ getVehicleDataKey });
-        this.setState({ numVehiclesDataKey });
+        // this.setState({ numVehiclesDataKey });
+        // const vehicleCount = drizzleState.contracts.Rideshare.getVehiclesCount[this.state.getVehicleDataKey];
+        this.getVehicles(1);
     };
+
+    componentWillUnmount() {
+        
+    }
 
 
     handleChange = date => {
@@ -54,9 +68,12 @@ class Home extends React.Component {
     render() {
         const { Rideshare } = this.props.drizzleState.contracts;
         const res = Rideshare.getVehicleList[this.state.getVehicleDataKey];
-        const vehiclesCount = Rideshare.getVehiclesCount[this.numVehiclesDataKey];
-        console.log(res && res.value);
-        console.log(res && res.length);
+        // let vehiclesCount = Rideshare.getVehiclesCount[this.state.numVehiclesDataKey];
+        // console.log(res && res.value); // same as console.log(res ? res.value: null);
+
+        // for(let i=0; i< vehiclesCount.value; i++) {
+            // console.log(vehiclesCount && vehiclesCount.value);
+        // }
         return (
             <Grid container style={style.wrapper}>
                 <Grid container style={style.SearchGrid} space={9}>
