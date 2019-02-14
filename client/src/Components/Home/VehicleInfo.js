@@ -1,7 +1,6 @@
 import React from 'react';
-import { Card, CardHeader, CardContent, Grid, Modal, Paper, Typography, Button, TextField } from '@material-ui/core';
-import PropTypes, { nominalTypeHack } from 'prop-types';
-import Slide from '@material-ui/core/Slide';
+import { Grid, Modal, Typography, Button, TextField } from '@material-ui/core';
+import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import pic from './blank.jpg';
 
@@ -22,7 +21,6 @@ const styles = theme => ({
         backgroundColor: theme.palette.background.paper,
     },
     paper: {
-        backgroundColor: 'fff',
         position: 'absolute',
         width: theme.spacing.unit * 100,
         backgroundColor: theme.palette.background.paper,
@@ -75,7 +73,7 @@ class VehicleInfo extends React.Component {
         const { drizzle, drizzleState } = this.props;
         const contract = drizzle.contracts.Rideshare;
 
-        const stackId = contract.methods["setHire"].cacheSend(
+        contract.methods["setHire"].cacheSend(
             drizzleState.accounts[0],   // something wrong here
             drizzleState.accounts[0], // and here
             this.state.startDateTime,
@@ -90,11 +88,11 @@ class VehicleInfo extends React.Component {
         // this.props.requestModal
 
         const { classes } = this.props;
-        const { value } = this.state;
+        // const { value } = this.state;
 
-        const { Rideshare } = this.props.drizzleState.contracts;
-        const res = Rideshare.getHire[this.state.getHireDataKey];
-        const resveh = Rideshare.getVehicleList[this.state.getVehicleDataKey];
+        // const { Rideshare } = this.props.drizzleState.contracts;
+        // const res = Rideshare.getHire[this.state.getHireDataKey];
+        // const resveh = Rideshare.getVehicleList[this.state.getVehicleDataKey];
         // console.log(res && res.value);
         // console.log(resveh && resveh.value);
         // const list = drizzle.contracts.Rideshare.methods.getVehicleList.cacheCall();
@@ -114,7 +112,7 @@ class VehicleInfo extends React.Component {
                         <Grid container>
                             <Grid item sm={9}>
                                 <Typography>Title</Typography>
-                                <img src={pic}></img>
+                                <img src={pic} alt=""></img>
                                 <Typography>Description</Typography>
                             </Grid>
                             <Grid item sm={3}>

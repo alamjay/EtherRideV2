@@ -8,6 +8,7 @@ contract Rideshare {
         uint price;
         string location; // locating is converted from string to address using parseAddress string
         VehicleState state; // status of the vehicle. Has to be idle to hire vehicle
+        bool registered;
     }
     
     struct User {
@@ -40,7 +41,7 @@ contract Rideshare {
     mapping (uint => Rental) rentals;
 
     // mapping to store the vehicles
-    mapping (address => Vehicle) vehicles;
+    mapping (address => Vehicle) public vehicles;
     
     // mapping to store the users
     mapping (address => User) users;
@@ -98,31 +99,32 @@ contract Rideshare {
     }
 
     // register the vehicle onto the blockhain    
-    function setVehicle(address owner, string memory make, string memory model, uint price, string memory location) public {
-        numVehicles++;
+    function setVehicle(string memory make, string memory model, uint price, string memory location) public {
+        numVehicles++; // Is this used?
 
-        Vehicle storage vehicle = vehicles[owner];
+        Vehicle storage vehicle = vehicles[msg.sender];
         
         vehicle.make = make;
         vehicle.model = model;
         vehicle.price = price;
         vehicle.location = location;
+        vehicle.registered = true;
 
-        emit getVeh(owner, make, model, price, location);
-        
-        vehicleAccts.push(owner) -1;
+        emit getVeh(msg.sender, make, model, price, location);
+
+        vehicleAccts.push(msg.sender);        
     }
     
     function getVehicle(address owner) public view returns (string memory, string memory, uint, string memory) {
         return (vehicles[owner].make, vehicles[owner].model, vehicles[owner].price, vehicles[owner].location);
     }
-    
-    function getVehicleList() public view returns (address[] memory vehicles) {
-        return vehicleAccts;
+
+    function isRegistered(address owner) public view returns (bool) {
+        return vehicles[owner].registered;
     }
-    
-    function getVehiclesCount() public view returns (uint) {
-        return numVehicles;
+
+    function vehicleList() public view returns(address[] memory) {
+        return vehicleAccts;
     }
 
 }

@@ -1,8 +1,5 @@
 import React from 'react';
 import {
-    Card,
-    CardActionArea,
-    CardContent,
     Typography,
     Button,
     Grid
@@ -40,7 +37,7 @@ class CarCard extends React.Component {
                         /> */}
                     <Grid>
                         <Grid item>
-                        <img src={pic} style={style.imgResult}></img>
+                        <img src={pic} style={style.imgResult} alt={this.props.vehicle.make}></img>
                         </Grid>
                         <Grid item>                        
                         <Typography style={style.cardTitle}>{this.props.vehicle.make}</Typography>
