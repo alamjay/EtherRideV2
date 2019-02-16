@@ -8,23 +8,38 @@ import VehicleInfo from "./Components/Home/VehicleInfo";
 import { BrowserRouter, Route } from 'react-router-dom';
 
 class App extends Component {
-  state = { loading: true, drizzleState: null, openModal: false, vehicles: [], address: null };
+  state = { loading: true, drizzleState: null, openModal: false, vehicles: [], address: null, selectedVehicle: null };
 
-  onModalOpen = () => {
+  onModalOpen = (data) => {
+    this.setState({ selectedVehicle: data });
     // this.setState( { openModal: isOpen });
     this.setState(state => ({
       openModal: !state.openModal
     }));
   }
 
+  viewModal() {
+        if(this.state.openModal) {
+      return (
+        <VehicleInfo
+            drizzle={this.props.drizzle}
+            drizzleState={this.state.drizzleState}
+            requestModal={this.onModalOpen}
+            openModal={this.state.openModal} 
+            vehicleData={this.state.selectedVehicle}
+            />
+      );  
+    }
+  }
+
   saveVehicle = (data) => {
-    const vehicle = { make: '', model: '', price: 0, location: '' };
+    const vehicle = { id: '', make: '', model: '', price: 0, location: '' };
+    vehicle.id = data[0];
     vehicle.make = data[1];
     vehicle.model = data[2];
     vehicle.price = data[3];
     vehicle.location = data[4];
-    this.state.vehicles.push(vehicle);
-    console.log(this.state.vehicles);
+    this.state.vehicles.push(vehicle);  
   }
 
   componentDidMount() {
@@ -45,11 +60,13 @@ class App extends Component {
         //   }
         //   this.setState({ address: event.address });
         // });
+        
       }
     });
   }
 
   componentDidUpdate() {
+    this.saveVehicle(['', 'BMW','M3','12','London']);
     this.props.drizzle.contracts.Rideshare.events.getVeh().on('data', event => {
       if (event.address !== this.state.address) {
         this.saveVehicle(event.returnValues);
@@ -88,11 +105,7 @@ class App extends Component {
         drizzleState={this.state.drizzleState} 
         DateAndTimePickers={this.props.DateAndTimePickers} 
         onModal={this.onModalOpen} /> */}
-        <VehicleInfo
-          drizzle={this.props.drizzle}
-          drizzleState={this.state.drizzleState}
-          requestModal={this.onModalOpen}
-          openModal={this.state.openModal} />
+        {this.viewModal()}
       </div>
     );
   }

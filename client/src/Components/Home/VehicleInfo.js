@@ -36,7 +36,7 @@ class VehicleInfo extends React.Component {
     state = {
         open: false,
         stackId: null, getHireDataKey: null, getVehicleDataKey: null,
-        startDateTime: '', endDateTime: '', location: '',
+        startDateTime: new Date(), endDateTime: null, location: '',
         vehicle: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E'
     };
 
@@ -48,6 +48,7 @@ class VehicleInfo extends React.Component {
         this.setState({ getHireDataKey });
         this.setState({ getVehicleDataKey });
         // this.setState({ open: true });
+
     }
     
     // UNSAFE_componentWillReceiveProps(newProps) {
@@ -85,17 +86,12 @@ class VehicleInfo extends React.Component {
     }
 
     render() {
-        // this.props.requestModal
-
         const { classes } = this.props;
-        // const { value } = this.state;
+        const title = this.props.vehicleData.make + ' ' + this.props.vehicleData.model;
+        const price = this.props.vehicleData.price; //hourly rate
 
-        // const { Rideshare } = this.props.drizzleState.contracts;
-        // const res = Rideshare.getHire[this.state.getHireDataKey];
-        // const resveh = Rideshare.getVehicleList[this.state.getVehicleDataKey];
-        // console.log(res && res.value);
-        // console.log(resveh && resveh.value);
-        // const list = drizzle.contracts.Rideshare.methods.getVehicleList.cacheCall();
+        const cost = ((new Date(this.state.endDateTime) - new Date(this.state.startDateTime)) / 3600000) * price; // convert into hours
+        console.log(cost);
 
         return (
             <div className={classes.root}>
@@ -111,7 +107,7 @@ class VehicleInfo extends React.Component {
                     <div style={getModalStyle()} className={classes.paper}>
                         <Grid container>
                             <Grid item sm={9}>
-                                <Typography>Title</Typography>
+                                <Typography>{title}</Typography>
                                 <img src={pic} alt=""></img>
                                 <Typography>Description</Typography>
                             </Grid>
@@ -130,15 +126,9 @@ class VehicleInfo extends React.Component {
                                         id="endDateTime"
                                         label="End Date"
                                         type="datetime-local"
-                                        defaultValue="2019-02-07T10:30"
+                                        defaultValue="2019-02-07T11:30"
                                         className={this.props.dateAndTimePicker}
                                         InputLabelProps={{ shrink: true, }}
-                                        onChange={this.handleChange}
-                                    />
-                                    <TextField
-                                        id="location"
-                                        label="Location"
-                                        type="text"
                                         onChange={this.handleChange}
                                     />
                                     <Button  onClick={this.onCheckout}>Checkout</Button>

@@ -23,7 +23,8 @@ class CarCard extends React.Component {
     // console.log(props.vehicle);
 
     handleClick = () => {
-        this.props.openModal();
+        const value = this.props.vehicle;
+        this.props.openModal(value); // pass in the vehicle id
     }
 
     render() {

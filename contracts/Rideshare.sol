@@ -24,6 +24,7 @@ contract Rideshare {
         string start_date_time;
         string end_date_time;
         string location;
+        uint cost;
     }
 
     event getVeh (
@@ -72,29 +73,32 @@ contract Rideshare {
 
     // hire a vehicle
     function setHire(
-        address driver,
         address vehicle,   // vehicle is the same as owner's key
         string memory start_date_time, 
         string memory end_date_time, 
-        string memory location
+        string memory location,
+        uint cost
     ) public payable  {
         rentalseq++;
+        
+        address driver = msg.sender; 
 
-        rentals[rentalseq] = Rental(driver, vehicle, start_date_time, end_date_time, location);
+        rentals[rentalseq] = Rental(driver, vehicle, start_date_time, end_date_time, location, cost);
     }
     
-    function getHire(uint rentalNo) public view returns (address, address, string memory, string memory, uint, string memory) {
+    function getHire(uint rentalNo) public view returns (address, address, string memory, string memory, string memory, uint) {
         
-        address vehicle = rentals[rentalNo].vehicle;
-        Vehicle memory vehicleInfo = vehicles[vehicle];
+        // address vehicle = rentals[rentalNo].vehicle;
+        // Vehicle memory vehicleInfo = vehicles[vehicle]; // will this be needed?
         
-        return ( 
+        return (
             rentals[rentalNo].driver,
             rentals[rentalNo].vehicle, 
             rentals[rentalNo].start_date_time, 
             rentals[rentalNo].end_date_time,
-            vehicleInfo.price,
-            vehicleInfo.location // or is it rentals[rentalNo].location?
+            rentals[rentalNo].location,
+            rentals[rentalNo].cost
+            // vehicleInfo.price
         );
     }
 
@@ -126,5 +130,4 @@ contract Rideshare {
     function vehicleList() public view returns(address[] memory) {
         return vehicleAccts;
     }
-
 }

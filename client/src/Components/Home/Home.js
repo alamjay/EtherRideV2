@@ -18,16 +18,16 @@ const style = {
 class Home extends React.Component {
     state = { open: false, age: null, selectedDate: null, 
         listKey: null, getVehicleDataKey: null, numVehiclesDataKey: null, 
-        vehiclesCount: 1, vehicles: this.props.vehicles};
+        vehiclesCount: 1, vehicles: this.props.vehicles, selectedVehicle: null};
 
-    saveVehicle = (data) => {
-        const vehicle = { make: '', model: '', price: 0, location: '' };
-        vehicle.make = data[1];
-        vehicle.model = data[2];
-        vehicle.price = data[3];
-        vehicle.location = data[4];
-        this.state.vehicles.push(vehicle);
-    }
+    // saveVehicle = (data) => {
+    //     const vehicle = { make: '', model: '', price: 0, location: '' };
+    //     vehicle.make = data[1];
+    //     vehicle.model = data[2];
+    //     vehicle.price = data[3];
+    //     vehicle.location = data[4];
+    //     this.state.vehicles.push(vehicle);
+    // }
 
     showVehicle = () => {
         for (let i=0; i<this.state.vehicles.length; i++) {
@@ -35,8 +35,9 @@ class Home extends React.Component {
         }
     }
 
-    onVehicleInfo = () => {
-        this.props.onModal();
+    onVehicleInfo = (vehicleValue) => {
+        this.setState({ selectedVehicle: vehicleValue });
+        this.props.onModal(vehicleValue);
     }
 
     componentDidMount() {
