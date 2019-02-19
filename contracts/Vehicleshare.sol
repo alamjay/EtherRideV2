@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-contract Rideshare {
+contract Vehicleshare {
 
     struct Vehicle {
         string make;
@@ -17,7 +17,7 @@ contract Rideshare {
         string licenceNo;
         string dob;
     }
-
+    
     struct Rental {
         address driver;
         address vehicle;
@@ -33,6 +33,18 @@ contract Rideshare {
         string _model,
         uint _price,
         string _location
+    );
+    
+    event notifyOwner (
+        uint indexed rentalId,
+        address indexed driver,
+        address owner,
+        string start_date_time,
+        string end_date_time
+    );
+    
+    event notifyDriver (
+        uint indexed rentalId
     );
     
     // Status of the vehicle 
@@ -73,17 +85,16 @@ contract Rideshare {
 
     // hire a vehicle
     function setHire(
-        address vehicle,   // vehicle is the same as owner's key
+        address owner,   // vehicle is the same as owner's key
         string memory start_date_time, 
-        string memory end_date_time, 
-        string memory location,
-        uint cost
+        string memory end_date_time 
+        // uint cost
     ) public payable  {
         rentalseq++;
         
-        address driver = msg.sender; 
-
-        rentals[rentalseq] = Rental(driver, vehicle, start_date_time, end_date_time, location, cost);
+        // address driver = msg.sender; 
+        rentals[rentalseq] = Rental(msg.sender, owner, start_date_time, end_date_time, vehicles[owner].location, msg.value);
+        emit notifyOwner(rentalseq, msg.sender, owner, start_date_time, end_date_time);
     }
     
     function getHire(uint rentalNo) public view returns (address, address, string memory, string memory, string memory, uint) {
@@ -130,4 +141,27 @@ contract Rideshare {
     function vehicleList() public view returns(address[] memory) {
         return vehicleAccts;
     }
+    
+    function acceptDriver(uint rentalId) public returns(bool) {
+        emit notifyDriver(rentalId);
+        return true;
+    }
+    
+    function confirmReceived(address payable owner) public {
+        // rentals[rentalId].vehicle
+        owner.transfer(address(this).balance);
+    }
+
+    function makePayment(address payable sendTo) public payable {
+        sendTo.transfer(msg.value);
+    }
+
+    // function getBalance(address _user) public view returns (uint){
+    //     return _user.balance;
+    // }
+    
+    // function balanceOf() public view returns(uint) {
+    //     return address(this).balance;
+    // }
+
 }

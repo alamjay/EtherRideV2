@@ -44,7 +44,7 @@ class Home extends React.Component {
         // const pic = require('./blank.jpg');
         // const dateAndTimePicker = this.props.dateAndTimePicker;
         const { drizzle } = this.props;
-        const contract = drizzle.contracts.Rideshare;
+        const contract = drizzle.contracts.Vehicleshare;
         const listKey = contract.methods["vehicleList"].cacheCall();
         this.setState({ listKey });
     };
@@ -62,9 +62,9 @@ class Home extends React.Component {
     };
 
     render() {
-        // const contract = this.props.drizzle.contracts.Rideshare;
-        // const { Rideshare } = this.props.drizzleState.contracts;
-        // const vehicleList = Rideshare.vehicleList[this.state.listKey];
+        // const contract = this.props.drizzle.contracts.Vehicleshare;
+        // const { Vehicleshare } = this.props.drizzleState.contracts;
+        // const vehicleList = Vehicleshare.vehicleList[this.state.listKey];
         // console.log(vehicleList && vehicleList.value); // same as console.log(res ? res.value: null);
         // if(vehicleList === undefined) {
             // return <div>Loading...</div>

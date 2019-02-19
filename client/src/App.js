@@ -54,7 +54,7 @@ class App extends Component {
       if (drizzleState.drizzleStatus.initialized) {
         this.setState({ loading: false, drizzleState });
 
-        // this.props.drizzle.contracts.Rideshare.events.getVeh().on('data', event => {
+        // this.props.drizzle.contracts.Vehicleshare.events.getVeh().on('data', event => {
         //   if (event.address !== this.state.address) {
         //     this.saveVehicle(event.returnValues);
         //   }
@@ -63,11 +63,11 @@ class App extends Component {
         
       }
     });
+    this.saveVehicle(['', 'BMW','M3','1','London']);
   }
 
   componentDidUpdate() {
-    this.saveVehicle(['', 'BMW','M3','12','London']);
-    this.props.drizzle.contracts.Rideshare.events.getVeh().on('data', event => {
+    this.props.drizzle.contracts.Vehicleshare.events.getVeh().on('data', event => {
       if (event.address !== this.state.address) {
         this.saveVehicle(event.returnValues);
       }

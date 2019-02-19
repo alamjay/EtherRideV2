@@ -36,19 +36,22 @@ class VehicleInfo extends React.Component {
     state = {
         open: false,
         stackId: null, getHireDataKey: null, getVehicleDataKey: null,
-        startDateTime: new Date(), endDateTime: null, location: '',
+        startDateTime: new Date(), endDateTime: null, location: '', cost: '',
         vehicle: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E'
     };
 
     componentDidMount() {
         const { drizzle, drizzleState } = this.props;
-        const contract = drizzle.contracts.Rideshare;
+        const contract = drizzle.contracts.Vehicleshare;
         const getHireDataKey = contract.methods["getHire"].cacheCall(drizzleState.accounts[0]);
         const getVehicleDataKey = contract.methods["getVehicle"].cacheCall(drizzleState.accounts[0]);
         this.setState({ getHireDataKey });
         this.setState({ getVehicleDataKey });
         // this.setState({ open: true });
-
+        
+        // console.log(drizzle.web3.sendTransaction({ from: drizzleState.accounts[0], to: contract.address, value: 200000000}));
+        console.log(contract.address);
+        console.log(drizzle.web3.eth.getBalance(contract.address));
     }
     
     // UNSAFE_componentWillReceiveProps(newProps) {
@@ -72,27 +75,36 @@ class VehicleInfo extends React.Component {
     onCheckout = async e => {
         e.preventDefault();
         const { drizzle, drizzleState } = this.props;
-        const contract = drizzle.contracts.Rideshare;
+        const contract = drizzle.contracts.Vehicleshare;
 
-        contract.methods["setHire"].cacheSend(
-            drizzleState.accounts[0],   // something wrong here
-            drizzleState.accounts[0], // and here
-            this.state.startDateTime,
-            this.state.endDateTime,
-            this.state.location,
-            { from: drizzleState.accounts[0] }
-        )
+        const price = this.props.vehicleData.price; //hourly rate
+        const cost = ((new Date(this.state.endDateTime) - new Date(this.state.startDateTime)) / 3600000) * price; // convert into hours
+        const amountSend = drizzle.web3.utils.toWei(cost.toString(), 'ether');
+
+        // contract.methods["setHire"].cacheSend(
+        //     drizzleState.accounts[0],
+        //     this.state.startDateTime,
+        //     this.state.endDateTime,
+        //     { from: drizzleState.accounts[0], value: amountSend } // work out how to add value to payable method
+        // );
+
+        contract.methods["makePayment"].cacheSend(
+            drizzleState.accounts[0],
+            {value: amountSend }
+        );
 
     }
 
     render() {
         const { classes } = this.props;
         const title = this.props.vehicleData.make + ' ' + this.props.vehicleData.model;
-        const price = this.props.vehicleData.price; //hourly rate
+        const location = this.props.vehicleData.location;
 
-        const cost = ((new Date(this.state.endDateTime) - new Date(this.state.startDateTime)) / 3600000) * price; // convert into hours
-        console.log(cost);
-
+        const { Vehicleshare } = this.props.drizzleState.contracts;
+        const getHire = Vehicleshare.getHire[this.state.getHireDataKey];
+        if(getHire !== undefined) {
+            // console.log(getHire && getHire.value);
+        }        
         return (
             <div className={classes.root}>
                 {/* <Button onClick={this.handleOpen}>Open Modal</Button> */}
@@ -106,10 +118,11 @@ class VehicleInfo extends React.Component {
                     {/* <Slide direction="up" in={this.state.open} mountOnEnter unmountOnExit> */}
                     <div style={getModalStyle()} className={classes.paper}>
                         <Grid container>
-                            <Grid item sm={9}>
-                                <Typography>{title}</Typography>
+                            <Grid item sm={8}>
+                                <Typography variant="title">{title}</Typography>
                                 <img src={pic} alt=""></img>
-                                <Typography>Description</Typography>
+                                <Typography variant="display1">{location}</Typography>
+                                <Typography></Typography>
                             </Grid>
                             <Grid item sm={3}>
                                 <form onSubmit={this.onCheckout}>

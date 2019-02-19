@@ -5,10 +5,10 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 // import drizzle functions and contract artifact
 import { Drizzle, generateStore } from "drizzle";
-import Rideshare from "./contracts/Rideshare.json";
+import Vehicleshare from "./contracts/Vehicleshare.json";
 
 // let drizzle know what contracts we want
-const options = { contracts: [Rideshare] };
+const options = { contracts: [Vehicleshare] };
 
 // setup the drizzle store and drizzle
 const drizzleStore = generateStore(options);

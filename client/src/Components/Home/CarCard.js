@@ -42,7 +42,7 @@ class CarCard extends React.Component {
                         </Grid>
                         <Grid item>                        
                         <Typography style={style.cardTitle}>{this.props.vehicle.make}</Typography>
-                        <Typography style={style.cardPrice}>{this.props.vehicle.price}</Typography>
+                        <Typography style={style.cardPrice}>{this.props.vehicle.price} Eth</Typography>
                         </Grid>
                     </Grid>
                 {/* </CardActionArea>

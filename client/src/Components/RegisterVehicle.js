@@ -1,26 +1,48 @@
 import React from "react";
-import { TextField, Typography, Button } from "@material-ui/core";
+import { TextField, Typography, Button, Paper } from "@material-ui/core";
+import Request from './Request';
 
 class RegisterVehicle extends React.Component { // Call it list car?
     state = {
         owner: null, make: '', model: '', price: 0, location: '',
-        stackId: null, dataKey: null, registered: false, registeredKey: null
+        stackId: null, dataKey: null, registered: false, registeredKey: null,
+        request: null, notifications: []
     };
 
     componentDidMount() {
         const { drizzle, drizzleState } = this.props;
-        const contract = drizzle.contracts.Rideshare;
+        const contract = drizzle.contracts.Vehicleshare;
         const dataKey = contract.methods["getVehicle"].cacheCall(drizzleState.accounts[0]);
         const registeredKey = contract.methods["isRegistered"].cacheCall(drizzleState.accounts[0]);
         this.setState({ dataKey });
         this.setState({ registeredKey });
+        this.getRequest(['0x22f', '19/02/2019 10:30', '19/02/2019 11:30']);
+
     }
 
     componentDidUpdate() {
-
         // if (isReg !== this.state.registered && isReg) {
         // this.setState({ registered: true });
         // }
+        this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on('data', event => {
+            if (event.address !== this.state.address) {
+                this.getRequest(event.returnValues);
+                console.log(event.returnValues);
+
+            }
+            this.setState({address: event.address});
+          });
+    }
+
+    getRequest = data => {
+        // const request = { rentalId: null, from: '', startDate: '', endDate: '' };
+        // request.rentalId = data.rentalId;
+        // request.from = data.driver;
+        // request.startDate = data.start_date_time;
+        // request.endDate = data.end_date_time;
+
+        const request = {rentalId: 1, from: '0x22f', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
+        this.state.notifications.push({request});
     }
 
     handleChange = e => {
@@ -30,7 +52,7 @@ class RegisterVehicle extends React.Component { // Call it list car?
     handleSubmit = async e => {
         e.preventDefault();
         const { drizzle, drizzleState } = this.props;
-        const contract = drizzle.contracts.Rideshare;
+        const contract = drizzle.contracts.Vehicleshare;
 
         const stackId = contract.methods["setVehicle"].cacheSend(
             this.state.make,
@@ -43,45 +65,62 @@ class RegisterVehicle extends React.Component { // Call it list car?
     }
 
     register() {
+        return (
+            null
+        );
+    }
+
+    showRequests() {
+        for(let i=0; i<this.state.notifications.length; i++) {
+            return <Request requestData={this.state.notifications[i]} drizzle={this.props.drizzle}/>
+        }
     }
 
     render() {
-        const { Rideshare } = this.props.drizzleState.contracts;
-        const isReg = Rideshare.isRegistered[this.state.registeredKey];
+        const { Vehicleshare } = this.props.drizzleState.contracts;
+        const isReg = Vehicleshare.isRegistered[this.state.registeredKey];
         if (isReg === undefined) {
             return <div>Loading...</div>
         }
-        if (isReg.value === false) {
-            return (
+        if (isReg.value === false) { // Check to see whether the user already registered the car
+        // if(true) { // Testing
+            return(
+                // <Button>Register My Vehicle</Button>
                 <form
-                    onSubmit={this.handleSubmit}
-                    style={{
-                        position: "absolute",
-                        left: "50%",
-                        top: "50%",
-                        transform: "translate(-50%, -50%)"
-                    }}
-                >
-                    <Typography>Enter the vehicle make: </Typography>
-                    <TextField id="make" onChange={this.handleChange} />
+                onSubmit={this.handleSubmit}
+                style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)"
+                }}
+            >
+                <Typography>Enter the vehicle make: </Typography>
+                <TextField id="make" onChange={this.handleChange} />
 
-                    <Typography>Enter the model:  </Typography>
-                    <TextField id="model" onChange={this.handleChange} />
+                <Typography>Enter the model:  </Typography>
+                <TextField id="model" onChange={this.handleChange} />
 
-                    <Typography>Specify the price: </Typography>
-                    <TextField type="number" id="price" onChange={this.handleChange} />
+                <Typography>Specify the price: </Typography>
+                <TextField type="number" id="price" onChange={this.handleChange} />
 
-                    <Typography>Enter the location</Typography>
-                    <TextField id="location" onChange={this.handleChange} />
-                    <Button type="submit">Submit</Button>
-                </form>
+                <Typography>Enter the location</Typography>
+                <TextField id="location" onChange={this.handleChange} />
+                <Button type="submit">Submit</Button>
+            </form>
             );
         }
         else {
-            console.log(isReg.value);
             return (
                 <div>
-
+                    <Typography component="h3">Requests</Typography>
+                    {this.showRequests()}
+                    {/* <Request/> */}
+                    <Typography component="h3">Manage Vehicle</Typography>
+                    <Paper>
+                        <Typography>Change My Vehicle</Typography>
+                        <Typography>Change Location</Typography>
+                    </Paper>
                 </div>
             );
         }

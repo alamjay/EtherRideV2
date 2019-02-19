@@ -20,7 +20,7 @@ class Login extends React.Component {
             console.log(e.target.value);
     
             const { drizzle, drizzleState } = this.props;
-            const contract = drizzle.contracts.Rideshare;
+            const contract = drizzle.contracts.Vehicleshare;
     
             const stackId = contract.methods["setUser"].cacheSend(
                 drizzleState.accounts[0],
@@ -36,14 +36,14 @@ class Login extends React.Component {
 
     componentDidMount() {
         const { drizzle, drizzleState } = this.props;
-        const contract = drizzle.contracts.Rideshare;
+        const contract = drizzle.contracts.Vehicleshare;
         const dataKey = contract.methods["getUser"].cacheCall(drizzleState.accounts[0]);
         this.setState({dataKey});
     }
 
     render() {
-        const { Rideshare } = this.props.drizzleState.contracts;
-        const res = Rideshare.getUser[this.state.dataKey];
+        const { Vehicleshare } = this.props.drizzleState.contracts;
+        const res = Vehicleshare.getUser[this.state.dataKey];
         console.log(res && res.value);
         return (
             <div>

@@ -1,7 +1,7 @@
 const MyStringStore = artifacts.require("MyStringStore");
-const Rideshare = artifacts.require("Rideshare");
+const Vehicleshare = artifacts.require("Vehicleshare");
 
 module.exports = function(deployer) {
   deployer.deploy(MyStringStore);
-  deployer.deploy(Rideshare);
+  deployer.deploy(Vehicleshare);
 };

@@ -30,10 +30,10 @@ const NavBar = (props) => {
               <Link to="/" style={style.navItems}>Home</Link>
               </Grid>
               <Grid item md={3}>
-              <Link to="/notfound" style={style.navItems}>About</Link>
+              <Link to="/about" style={style.navItems}>About</Link>
               </Grid>
               <Grid item md={3}>
-              <Link to="/RegisterVehicle" style={style.navItems}>List Car</Link>
+              <Link to="/RegisterVehicle" style={style.navItems}>My Car</Link>
               </Grid>
             </Grid>
           </Grid>
