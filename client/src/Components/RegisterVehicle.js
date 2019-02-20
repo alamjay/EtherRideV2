@@ -1,6 +1,16 @@
 import React from "react";
-import { TextField, Typography, Button, Paper } from "@material-ui/core";
+import { TextField, Typography, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Card, Grid } from "@material-ui/core";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Request from './Request';
+import { isWidthDown } from "@material-ui/core/withWidth";
+
+const style = {
+    container: { paddingLeft: 200, paddingRight: 200, margin: 'auto' },
+    leftDiv: { display: 'inline-block', maxWidth: '300', verticalAlign: 'top' },
+    rightDiv: { display: 'inline-block', maxWidth: '150' },
+    inlineDiv: { marginTop: 50 },
+    wrapper: { marginTop: 10 }
+}
 
 class RegisterVehicle extends React.Component { // Call it list car?
     state = {
@@ -17,7 +27,6 @@ class RegisterVehicle extends React.Component { // Call it list car?
         this.setState({ dataKey });
         this.setState({ registeredKey });
         this.getRequest(['0x22f', '19/02/2019 10:30', '19/02/2019 11:30']);
-
     }
 
     componentDidUpdate() {
@@ -30,8 +39,8 @@ class RegisterVehicle extends React.Component { // Call it list car?
                 console.log(event.returnValues);
 
             }
-            this.setState({address: event.address});
-          });
+            this.setState({ address: event.address });
+        });
     }
 
     getRequest = data => {
@@ -41,8 +50,8 @@ class RegisterVehicle extends React.Component { // Call it list car?
         // request.startDate = data.start_date_time;
         // request.endDate = data.end_date_time;
 
-        const request = {rentalId: 1, from: '0x22f', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
-        this.state.notifications.push({request});
+        const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
+        this.state.notifications.push({ request });
     }
 
     handleChange = e => {
@@ -71,8 +80,8 @@ class RegisterVehicle extends React.Component { // Call it list car?
     }
 
     showRequests() {
-        for(let i=0; i<this.state.notifications.length; i++) {
-            return <Request requestData={this.state.notifications[i]} drizzle={this.props.drizzle}/>
+        for (let i = 0; i < this.state.notifications.length; i++) {
+            return <Request requestData={this.state.notifications[i]} drizzle={this.props.drizzle} />
         }
     }
 
@@ -83,44 +92,75 @@ class RegisterVehicle extends React.Component { // Call it list car?
             return <div>Loading...</div>
         }
         if (isReg.value === false) { // Check to see whether the user already registered the car
-        // if(true) { // Testing
-            return(
+            // if(true) { // Testing
+            return (
                 // <Button>Register My Vehicle</Button>
                 <form
-                onSubmit={this.handleSubmit}
-                style={{
-                    position: "absolute",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)"
-                }}
-            >
-                <Typography>Enter the vehicle make: </Typography>
-                <TextField id="make" onChange={this.handleChange} />
+                    onSubmit={this.handleSubmit}
+                    style={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)"
+                    }}
+                >
+                    <Typography>Enter the vehicle make: </Typography>
+                    <TextField id="make" onChange={this.handleChange} />
 
-                <Typography>Enter the model:  </Typography>
-                <TextField id="model" onChange={this.handleChange} />
+                    <Typography>Enter the model:  </Typography>
+                    <TextField id="model" onChange={this.handleChange} />
 
-                <Typography>Specify the price: </Typography>
-                <TextField type="number" id="price" onChange={this.handleChange} />
+                    <Typography>Specify the price: </Typography>
+                    <TextField type="number" id="price" onChange={this.handleChange} />
 
-                <Typography>Enter the location</Typography>
-                <TextField id="location" onChange={this.handleChange} />
-                <Button type="submit">Submit</Button>
-            </form>
+                    <Typography>Enter the location</Typography>
+                    <TextField id="location" onChange={this.handleChange} />
+                    <Button type="submit">Submit</Button>
+                </form>
             );
         }
         else {
             return (
-                <div>
-                    <Typography component="h3">Requests</Typography>
-                    {this.showRequests()}
-                    {/* <Request/> */}
-                    <Typography component="h3">Manage Vehicle</Typography>
-                    <Paper>
-                        <Typography>Change My Vehicle</Typography>
-                        <Typography>Change Location</Typography>
-                    </Paper>
+                <div style={style.container}>
+                    <Grid item={3} style={style.inlineDiv}>
+
+                        <Typography variant="display1">Requests</Typography>
+                        {this.showRequests()}
+                        {/* <Request/> */}
+                    </Grid>
+                    <Grid style={style.inlineDiv}>
+
+                        <Typography variant="display1">Manage Vehicle</Typography>
+                        <ExpansionPanel style={style.wrapper}>
+                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography variant="subheading">Change My Vehicle</Typography>
+                            </ExpansionPanelSummary>
+                            <ExpansionPanelDetails>
+                                <form
+                                    onSubmit={this.handleSubmit}>
+                                    <Typography>Enter the vehicle make: </Typography>
+                                    <TextField id="make" onChange={this.handleChange} />
+
+                                    <Typography>Enter the model:  </Typography>
+                                    <TextField id="model" onChange={this.handleChange} />
+
+                                    <Typography>Specify the price: </Typography>
+                                    <TextField type="number" id="price" onChange={this.handleChange} />
+                                    <Button type="submit">Submit</Button>
+                                </form>
+                            </ExpansionPanelDetails>
+                        </ExpansionPanel>
+                        <ExpansionPanel>
+                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography variant="subheading">Change Location</Typography>
+                            </ExpansionPanelSummary>
+                            <ExpansionPanelDetails>
+                                <Typography>Enter the location</Typography>
+                                <TextField id="location" onChange={this.handleChange} />
+                            </ExpansionPanelDetails>
+                        </ExpansionPanel>
+                    </Grid>
+
                 </div>
             );
         }

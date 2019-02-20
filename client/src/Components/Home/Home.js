@@ -10,9 +10,10 @@ const style = {
     SearchGrid: { position: "relative", marginTop: 20 },
     Paper: { padding: 10 },
     grid: { width: "60%" },
-    submitBtn: { marginTop: 10 },
+    submitBtn: { marginTop: 10, backgroundColor: '#4286f4', color: 'white', marginLeft: 20 },
     resultGrid: { marginTop: 30, marginLeft: 10 },
-    wrapper: { paddingLeft: 50, paddingRight: 50 }
+    wrapper: { paddingLeft: 50, paddingRight: 50 },
+    TextField: {maxWidth: 200}
 };
 
 class Home extends React.Component {
@@ -78,7 +79,8 @@ class Home extends React.Component {
                                 id="location"
                                 label="Location"
                                 placeholder="Where"
-                                InputLabelProps={{ shrink: true, }} />
+                                InputLabelProps={{ shrink: true, }}
+                                style={style.TextField} />
                         </Grid>
                         <Grid item xs={2}>
                             <TextField
@@ -88,6 +90,7 @@ class Home extends React.Component {
                                 defaultValue="2019-02-07T10:30"
                                 className={this.props.dateAndTimePicker}
                                 InputLabelProps={{ shrink: true, }}
+                                style={style.TextField}
                             />
                         </Grid>
                         <Grid item xs={1}>
@@ -98,6 +101,7 @@ class Home extends React.Component {
                                 defaultValue="2019-02-07T10:30"
                                 className={this.props.dateAndTimePicker}
                                 InputLabelProps={{ shrink: true, }}
+                                style={style.TextField}
                             />
                         </Grid>
                         <Grid item xs={2}>

@@ -6,6 +6,23 @@ import RegisterVehicle from './Components/RegisterVehicle';
 import Home from "./Components/Home/Home";
 import VehicleInfo from "./Components/Home/VehicleInfo";
 import { BrowserRouter, Route } from 'react-router-dom';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { Typography } from "@material-ui/core";
+import { relative } from "path";
+
+const style = {
+  progress: {
+    position: 'absolute',
+     margin: 'auto',
+     top: 0,
+     right: 0,
+     bottom: 0,
+     left: 0,
+     width: 70,
+     height: 70, 
+     textAlign: 'center'
+  },
+}
 
 class App extends Component {
   state = { loading: true, drizzleState: null, openModal: false, vehicles: [], address: null, selectedVehicle: null };
@@ -80,7 +97,12 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.loading) return "Loading Drizzle...";
+    if (this.state.loading) return (
+      <div style={style.progress}>
+      <CircularProgress disableShrink/>
+      <Typography variant="display1">Loading...</Typography>
+      </div>
+      );
     return (
       <div className="App">
         <BrowserRouter>

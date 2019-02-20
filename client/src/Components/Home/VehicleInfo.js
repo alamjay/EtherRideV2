@@ -27,8 +27,7 @@ const styles = theme => ({
         boxShadow: theme.shadows[5],
         padding: theme.spacing.unit * 4,
         outline: 'none',
-    },
-    SearchGrid: {}
+    }
 });
 
 class VehicleInfo extends React.Component {
@@ -36,7 +35,7 @@ class VehicleInfo extends React.Component {
     state = {
         open: false,
         stackId: null, getHireDataKey: null, getVehicleDataKey: null,
-        startDateTime: new Date(), endDateTime: null, location: '', cost: '',
+        startDateTime: null, endDateTime: null, location: '', cost: null,
         vehicle: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E'
     };
 
@@ -95,16 +94,25 @@ class VehicleInfo extends React.Component {
 
     }
 
+    getCost() {
+        if(this.state.startDateTime !== null && this.state.endDateTime !== null) {
+            const price = this.props.vehicleData.price;
+            const cost = ((new Date(this.state.endDateTime) - new Date(this.state.startDateTime)) / 3600000) * price; // convert into hours
+            return cost.toFixed(3) + " eth";
+        }
+    }
+
     render() {
         const { classes } = this.props;
         const title = this.props.vehicleData.make + ' ' + this.props.vehicleData.model;
         const location = this.props.vehicleData.location;
 
-        const { Vehicleshare } = this.props.drizzleState.contracts;
-        const getHire = Vehicleshare.getHire[this.state.getHireDataKey];
-        if(getHire !== undefined) {
-            // console.log(getHire && getHire.value);
-        }        
+        // const { Vehicleshare } = this.props.drizzleState.contracts;
+        // const getHire = Vehicleshare.getHire[this.state.getHireDataKey];
+        // if(getHire !== undefined) {
+        //     console.log(getHire && getHire.value);
+        // }
+
         return (
             <div className={classes.root}>
                 {/* <Button onClick={this.handleOpen}>Open Modal</Button> */}
@@ -144,6 +152,7 @@ class VehicleInfo extends React.Component {
                                         InputLabelProps={{ shrink: true, }}
                                         onChange={this.handleChange}
                                     />
+                                    <Typography variant="display1" >{this.getCost()}</Typography>
                                     <Button  onClick={this.onCheckout}>Checkout</Button>
                                 </form>
                             </Grid>
