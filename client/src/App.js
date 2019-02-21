@@ -9,6 +9,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Typography } from "@material-ui/core";
 import { relative } from "path";
+import About from "./Components/About";
 
 const style = {
   progress: {
@@ -117,6 +118,9 @@ class App extends Component {
             )} />
             <Route path="/registervehicle" exact render={(routeProps) => (
               <RegisterVehicle {...routeProps} drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
+            )} />
+            <Route path="/about" exact render={(routeProps) => (
+              <About {...routeProps} />
             )} />
           </div>
         </BrowserRouter>
