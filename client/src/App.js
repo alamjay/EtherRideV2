@@ -14,19 +14,20 @@ import About from "./Components/About";
 const style = {
   progress: {
     position: 'absolute',
-     margin: 'auto',
-     top: 0,
-     right: 0,
-     bottom: 0,
-     left: 0,
-     width: 70,
-     height: 70, 
-     textAlign: 'center'
+    margin: 'auto',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    width: 70,
+    height: 70,
+    textAlign: 'center'
   },
 }
 
 class App extends Component {
-  state = { loading: true, drizzleState: null, openModal: false, vehicles: [], address: null, selectedVehicle: null };
+  state = { loading: true, drizzleState: null, openModal: false, vehicles: [], notifications: [], 
+    address: null, selectedVehicle: null, requestId: null };
 
   onModalOpen = (data) => {
     this.setState({ selectedVehicle: data });
@@ -37,16 +38,16 @@ class App extends Component {
   }
 
   viewModal() {
-        if(this.state.openModal) {
+    if (this.state.openModal) {
       return (
         <VehicleInfo
-            drizzle={this.props.drizzle}
-            drizzleState={this.state.drizzleState}
-            requestModal={this.onModalOpen}
-            openModal={this.state.openModal} 
-            vehicleData={this.state.selectedVehicle}
-            />
-      );  
+          drizzle={this.props.drizzle}
+          drizzleState={this.state.drizzleState}
+          requestModal={this.onModalOpen}
+          openModal={this.state.openModal}
+          vehicleData={this.state.selectedVehicle}
+        />
+      );
     }
   }
 
@@ -57,9 +58,21 @@ class App extends Component {
     vehicle.model = data[2];
     vehicle.price = data[3];
     vehicle.location = data[4];
-    this.state.vehicles.push(vehicle);  
+    this.state.vehicles.push(vehicle);
   }
-  
+
+  getRequest = data => {
+    const request = { rentalId: null, from: '', startDate: '', endDate: '' };
+    request.rentalId = data.rentalId;
+    request.from = data.driver;
+    request.startDate = data.start_date_time;
+    request.endDate = data.end_date_time;
+    // const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
+    if (request.rentalId !== null) {
+      this.state.notifications.push({ request });
+      console.log(request);
+    }
+  }
 
   componentDidMount() {
     const { drizzle } = this.props;
@@ -79,13 +92,15 @@ class App extends Component {
         //   }
         //   this.setState({ address: event.address });
         // });
-        
+
       }
     });
-    this.saveVehicle(['', 'BMW','3 series','1','London']);
-    this.saveVehicle(['', 'Mercedes','C Class','2','Essex']);
-    this.saveVehicle(['', 'Audi','A7','3','Uxbridge']);
-    this.saveVehicle(['', 'VW','Polo','1','Stratford']);
+    this.saveVehicle(['0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', 'BMW', '3 series', '1', 'London']);
+    this.saveVehicle(['', 'Mercedes', 'C Class', '2', 'Essex']);
+    this.saveVehicle(['', 'Audi', 'A7', '3', 'Uxbridge']);
+    this.saveVehicle(['', 'VW', 'Polo', '1', 'Stratford']);
+    // this.getRequest({rentalId: 0, driver: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', start_date_time:'19/02/2019 10:30', end_date_time:'19/02/2019 11:30'});
+
   }
 
   componentDidUpdate() {
@@ -93,17 +108,15 @@ class App extends Component {
       if (event.address !== this.state.address) {
         this.saveVehicle(event.returnValues);
       }
-      this.setState({address: event.address});
+      this.setState({ address: event.address });
     });
 
     this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on('data', event => {
-      if (event.address !== this.state.address) {
-          this.getRequest(event.returnValues);
-          console.log(event.returnValues);
-
+      if (event.rentalId !== this.state.requestId) {
+        this.getRequest(event.returnValues);
       }
-      this.setState({ address: event.address });
-  });
+      this.setState({ requestId: event.rentalId });
+    });
 
   }
 
@@ -114,10 +127,10 @@ class App extends Component {
   render() {
     if (this.state.loading) return (
       <div style={style.progress}>
-      <CircularProgress disableShrink/>
-      <Typography variant="display1">Loading...</Typography>
+        <CircularProgress disableShrink />
+        <Typography variant="display1">Loading...</Typography>
       </div>
-      );
+    );
     return (
       <div className="App">
         <BrowserRouter>
@@ -131,7 +144,7 @@ class App extends Component {
                 vehicles={this.state.vehicles} />
             )} />
             <Route path="/registervehicle" exact render={(routeProps) => (
-              <RegisterVehicle {...routeProps} drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
+              <RegisterVehicle {...routeProps} drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} getNotifications={this.state.notifications} />
             )} />
             <Route path="/about" exact render={(routeProps) => (
               <About {...routeProps} />

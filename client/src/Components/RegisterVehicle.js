@@ -16,7 +16,7 @@ class RegisterVehicle extends React.Component { // Call it list car?
     state = {
         owner: null, make: '', model: '', price: 0, location: '',
         stackId: null, dataKey: null, registered: false, registeredKey: null,
-        request: null, notifications: []
+        request: null, notifications: this.props.getNotifications, address: null
     };
 
     componentDidMount() {
@@ -26,7 +26,6 @@ class RegisterVehicle extends React.Component { // Call it list car?
         const registeredKey = contract.methods["isRegistered"].cacheCall(drizzleState.accounts[0]);
         // this.setState({ dataKey });
         this.setState({ registeredKey });
-        // this.getRequest({rentalId: 1, driver: drizzleState.accounts[0], start_date_time:'19/02/2019 10:30', end_date_time:'19/02/2019 11:30'});
 
     }
 
@@ -34,26 +33,25 @@ class RegisterVehicle extends React.Component { // Call it list car?
         // if (isReg !== this.state.registered && isReg) {
         // this.setState({ registered: true });
         // }
-        this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on('data', event => {
-            if (event.address !== this.state.address) {
-                this.getRequest(event.returnValues);
-            }
-            this.setState({ address: event.address });
-        });
+        // this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on('data', event => {
+        //     if (event.address !== this.state.address) {
+        //         this.getRequest(event.returnValues);
+        //     }
+        //     this.setState({ address: event.address });
+        // });
     }
 
-    getRequest = data => {
-        const request = { rentalId: null, from: '', startDate: '', endDate: '' };
-        request.rentalId = data.rentalId;
-        request.from = data.driver;
-        request.startDate = data.start_date_time;
-        request.endDate = data.end_date_time;
-
-        // const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
-        if(request.rentalId !== undefined) {
-            this.state.notifications.push({ request });
-        }
-    }   
+    // getRequest = data => {
+    //     const request = { rentalId: null, from: '', startDate: '', endDate: '' };
+    //     request.rentalId = data.rentalId;
+    //     request.from = data.driver;
+    //     request.startDate = data.start_date_time;
+    //     request.endDate = data.end_date_time;
+    //     // const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
+    //     if(request.rentalId !== null) {
+    //         this.state.notifications.push({ request });
+    //     }
+    // }   
 
     handleChange = e => {
         this.setState({ [e.target.id]: e.target.value });
@@ -80,14 +78,15 @@ class RegisterVehicle extends React.Component { // Call it list car?
         );
     }
 
-    showRequests() {
-
-        if(this.state.notifications.length > 0) {
+    showRequests = () => {
+        const show = [];
+        console.log(this.state.notifications);
+        // if(this.state.notifications.length > 0) {
             for (let i = 0; i < this.state.notifications.length; i++) {
-                return <Request requestData={this.state.notifications[i]} drizzle={this.props.drizzle } requestComponent={true} />
-            }    
-        }
-        return ( <Paper><Typography variant="title">No requests yet</Typography></Paper> );
+                show.push(<Request requestData={this.state.notifications[i]} drizzle={this.props.drizzle } requestComponent={true} />);
+            }   
+        // }
+        return ( show.length !==0 ? show : <Paper><Typography variant="title">No requests yet</Typography></Paper> );
     }
 
     render() {

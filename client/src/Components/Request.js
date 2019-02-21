@@ -12,7 +12,6 @@ class Request extends React.Component {
     state = {requestKey: null, executeOrder: false, requestComponent: this.props.requestComponent}
 
     componentDidMount() {
-        const { drizzle } = this.props;
         // const contract = drizzle.contracts.Vehicleshare;
         // drizzle.contracts.SimpleStorage.methods.storedData.cacheCall()
     }
@@ -42,6 +41,7 @@ class Request extends React.Component {
                 </div>
             );    
         }
+        return <div></div>
     }
 }
 
