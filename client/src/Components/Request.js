@@ -9,32 +9,39 @@ const style = {
 
 class Request extends React.Component {
 
-    state = {requestKey: null}
+    state = {requestKey: null, executeOrder: false, requestComponent: this.props.requestComponent}
 
     componentDidMount() {
         const { drizzle } = this.props;
-        const contract = drizzle.contracts.Vehicleshare;
-        const requestKey = contract.methods["getVehicle"].cacheCall();
-        this.setState({ requestKey });
+        // const contract = drizzle.contracts.Vehicleshare;
+        // drizzle.contracts.SimpleStorage.methods.storedData.cacheCall()
     }
 
-    handleRequest() {
+    componentDidUpdate(){
+        if(this.state.executeOrder) {
+            this.setState({executeOrder: false});
+            this.props.drizzle.contracts.Vehicleshare.methods.acceptDriver.cacheSend(this.props.requestData.request.from);
+        }
+    }
 
+    handleRequest = () => {
+        this.setState({executeOrder: true, requestComponent: false});
     }
 
     render() {
-        return (
-            <div>
-                <Paper style={style.container}>
-                    <Typography>From: {this.props.requestData.request.from} </Typography>
-                    <Typography>Start: {this.props.requestData.request.startDate}</Typography>
-                    <Typography>End: {this.props.requestData.request.endDate}</Typography>
-                    <Button onClick={this.handleRequest()} style={style.successBtn}>Accept</Button>
-                    <Button style={style.rejectBtn}>Reject</Button>
-                </Paper>    
-            </div>
-        );
-    
+        if(this.state.requestComponent) {
+            return (
+                <div>
+                    <Paper style={style.container}>
+                        <Typography>From: {this.props.requestData.request.from} </Typography>
+                        <Typography>Start: {this.props.requestData.request.startDate}</Typography>
+                        <Typography>End: {this.props.requestData.request.endDate}</Typography>
+                        <Button onClick={this.handleRequest} style={style.successBtn}>Accept</Button>
+                        <Button style={style.rejectBtn}>Reject</Button>
+                    </Paper>    
+                </div>
+            );    
+        }
     }
 }
 

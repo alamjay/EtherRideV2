@@ -80,17 +80,17 @@ class VehicleInfo extends React.Component {
         const cost = ((new Date(this.state.endDateTime) - new Date(this.state.startDateTime)) / 3600000) * price; // convert into hours
         const amountSend = drizzle.web3.utils.toWei(cost.toString(), 'ether');
 
-        // contract.methods["setHire"].cacheSend(
-        //     drizzleState.accounts[0],
-        //     this.state.startDateTime,
-        //     this.state.endDateTime,
-        //     { from: drizzleState.accounts[0], value: amountSend } // work out how to add value to payable method
-        // );
-
-        contract.methods["makePayment"].cacheSend(
+        contract.methods["setHire"].cacheSend(
             drizzleState.accounts[0],
-            {value: amountSend }
+            this.state.startDateTime,
+            this.state.endDateTime,
+            { from: drizzleState.accounts[0], value: amountSend } // work out how to add value to payable method
         );
+
+        // contract.methods["makePayment"].cacheSend(
+        //     drizzleState.accounts[0],
+        //     {value: amountSend }
+        // );
 
     }
 

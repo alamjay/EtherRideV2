@@ -142,9 +142,9 @@ contract Vehicleshare {
         return vehicleAccts;
     }
     
-    function acceptDriver(uint rentalId) public returns(bool) {
-        emit notifyDriver(rentalId);
-        return true;
+    function acceptDriver(address payable driver) public {
+        // emit notifyDriver(rentalId);
+        driver.transfer(address(this).balance);
     }
     
     function confirmReceived(address payable owner) public {

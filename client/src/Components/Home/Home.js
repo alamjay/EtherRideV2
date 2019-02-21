@@ -13,13 +13,16 @@ const style = {
     submitBtn: { marginTop: 10, backgroundColor: '#4286f4', color: 'white', marginLeft: 20 },
     resultGrid: { marginTop: 30, marginLeft: 10 },
     wrapper: { paddingLeft: 50, paddingRight: 50 },
-    TextField: {maxWidth: 200}
+    TextField: { maxWidth: 200 },
+    random: { width: 200, height: 200, backgroundColor: 'grey', margin: 10 }
 };
 
 class Home extends React.Component {
-    state = { open: false, age: null, selectedDate: null, 
-        listKey: null, getVehicleDataKey: null, numVehiclesDataKey: null, 
-        vehiclesCount: 1, vehicles: this.props.vehicles, selectedVehicle: null};
+    state = {
+        open: false, age: null, selectedDate: null,
+        listKey: null, getVehicleDataKey: null, numVehiclesDataKey: null,
+        vehiclesCount: 1, vehicles: this.props.vehicles, selectedVehicle: null
+    };
 
     // saveVehicle = (data) => {
     //     const vehicle = { make: '', model: '', price: 0, location: '' };
@@ -31,9 +34,12 @@ class Home extends React.Component {
     // }
 
     showVehicle = () => {
-        for (let i=0; i<this.state.vehicles.length; i++) {
-            return <CarCard vehicle={this.state.vehicles[i]} openModal={this.onVehicleInfo}/>
+        const show = [];
+        for (let i = 0; i < this.state.vehicles.length; i++) {
+            // return <CarCard vehicle={this.state.vehicles[i]} openModal={this.onVehicleInfo}/>
+            show.push(<Grid item md={3}><CarCard key={i} vehicle={this.state.vehicles[i]} openModal={this.onVehicleInfo} /></Grid>);
         }
+        return show;
     }
 
     onVehicleInfo = (vehicleValue) => {
@@ -68,60 +74,54 @@ class Home extends React.Component {
         // const vehicleList = Vehicleshare.vehicleList[this.state.listKey];
         // console.log(vehicleList && vehicleList.value); // same as console.log(res ? res.value: null);
         // if(vehicleList === undefined) {
-            // return <div>Loading...</div>
+        // return <div>Loading...</div>
         // }
-            return (
-                <div>
-                <Grid container style={style.wrapper}>
-                    <Grid container style={style.SearchGrid} space={9}>
-                        <Grid item xs={2}>
-                            <TextField
-                                id="location"
-                                label="Location"
-                                placeholder="Where"
-                                InputLabelProps={{ shrink: true, }}
-                                style={style.TextField} />
-                        </Grid>
-                        <Grid item xs={2}>
-                            <TextField
-                                id="startDateTime"
-                                label="Start Date"
-                                type="datetime-local"
-                                defaultValue="2019-02-07T10:30"
-                                className={this.props.dateAndTimePicker}
-                                InputLabelProps={{ shrink: true, }}
-                                style={style.TextField}
-                            />
-                        </Grid>
-                        <Grid item xs={1}>
-                            <TextField
-                                id="endDateTime"
-                                label="End Date"
-                                type="datetime-local"
-                                defaultValue="2019-02-07T10:30"
-                                className={this.props.dateAndTimePicker}
-                                InputLabelProps={{ shrink: true, }}
-                                style={style.TextField}
-                            />
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Button style={style.submitBtn}>Submit</Button>
-                        </Grid>
+        return (
+            <div style={style.wrapper}>
+                <Grid container style={style.SearchGrid} space={9}>
+                    <Grid item xs={2}>
+                        <TextField
+                            id="location"
+                            label="Location"
+                            placeholder="Where"
+                            InputLabelProps={{ shrink: true, }}
+                            style={style.TextField} />
                     </Grid>
-                    <Grid container space={12} style={style.resultGrid}>
-                        {/* <Grid md={12}> */}
-                            <Grid item md={3}>
-                                {this.showVehicle()}
-                                {/* <CarCard vehicle={this.state.vehicles[0]} openModal={this.onVehicleInfo}/> */}
-                            </Grid>
-                        {/* </Grid> */}
+                    <Grid item xs={2}>
+                        <TextField
+                            id="startDateTime"
+                            label="Start Date"
+                            type="datetime-local"
+                            defaultValue="2019-02-07T10:30"
+                            className={this.props.dateAndTimePicker}
+                            InputLabelProps={{ shrink: true, }}
+                            style={style.TextField}
+                        />
+                    </Grid>
+                    <Grid item xs={1}>
+                        <TextField
+                            id="endDateTime"
+                            label="End Date"
+                            type="datetime-local"
+                            defaultValue="2019-02-07T10:30"
+                            className={this.props.dateAndTimePicker}
+                            InputLabelProps={{ shrink: true, }}
+                            style={style.TextField}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Button style={style.submitBtn}>Submit</Button>
                     </Grid>
                 </Grid>
-                </div>
-            );
+                <Grid container spacing={24} style={style.resultGrid}>
+                        {this.showVehicle()}
+                        {/* <div style={style.random}></div> */}
+                </Grid>
+            </div>
+        );
 
         // return (
-            // <div>Something is wrong...</div>
+        // <div>Something is wrong...</div>
         // );
     }
 };

@@ -59,6 +59,7 @@ class App extends Component {
     vehicle.location = data[4];
     this.state.vehicles.push(vehicle);  
   }
+  
 
   componentDidMount() {
     const { drizzle } = this.props;
@@ -81,7 +82,10 @@ class App extends Component {
         
       }
     });
-    this.saveVehicle(['', 'BMW','M3','1','London']);
+    this.saveVehicle(['', 'BMW','3 series','1','London']);
+    this.saveVehicle(['', 'Mercedes','C Class','2','Essex']);
+    this.saveVehicle(['', 'Audi','A7','3','Uxbridge']);
+    this.saveVehicle(['', 'VW','Polo','1','Stratford']);
   }
 
   componentDidUpdate() {
@@ -91,6 +95,16 @@ class App extends Component {
       }
       this.setState({address: event.address});
     });
+
+    this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on('data', event => {
+      if (event.address !== this.state.address) {
+          this.getRequest(event.returnValues);
+          console.log(event.returnValues);
+
+      }
+      this.setState({ address: event.address });
+  });
+
   }
 
   componentWillUnmount() {

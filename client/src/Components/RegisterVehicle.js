@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Typography, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Card, Grid } from "@material-ui/core";
+import { TextField, Typography, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Card, Grid, Paper } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Request from './Request';
 import { isWidthDown } from "@material-ui/core/withWidth";
@@ -22,11 +22,12 @@ class RegisterVehicle extends React.Component { // Call it list car?
     componentDidMount() {
         const { drizzle, drizzleState } = this.props;
         const contract = drizzle.contracts.Vehicleshare;
-        const dataKey = contract.methods["getVehicle"].cacheCall(drizzleState.accounts[0]);
+        // const dataKey = contract.methods["getVehicle"].cacheCall(drizzleState.accounts[0]);
         const registeredKey = contract.methods["isRegistered"].cacheCall(drizzleState.accounts[0]);
-        this.setState({ dataKey });
+        // this.setState({ dataKey });
         this.setState({ registeredKey });
-        this.getRequest(['0x22f', '19/02/2019 10:30', '19/02/2019 11:30']);
+        // this.getRequest({rentalId: 1, driver: drizzleState.accounts[0], start_date_time:'19/02/2019 10:30', end_date_time:'19/02/2019 11:30'});
+
     }
 
     componentDidUpdate() {
@@ -36,23 +37,23 @@ class RegisterVehicle extends React.Component { // Call it list car?
         this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on('data', event => {
             if (event.address !== this.state.address) {
                 this.getRequest(event.returnValues);
-                console.log(event.returnValues);
-
             }
             this.setState({ address: event.address });
         });
     }
 
     getRequest = data => {
-        // const request = { rentalId: null, from: '', startDate: '', endDate: '' };
-        // request.rentalId = data.rentalId;
-        // request.from = data.driver;
-        // request.startDate = data.start_date_time;
-        // request.endDate = data.end_date_time;
+        const request = { rentalId: null, from: '', startDate: '', endDate: '' };
+        request.rentalId = data.rentalId;
+        request.from = data.driver;
+        request.startDate = data.start_date_time;
+        request.endDate = data.end_date_time;
 
-        const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
-        this.state.notifications.push({ request });
-    }
+        // const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
+        if(request.rentalId !== undefined) {
+            this.state.notifications.push({ request });
+        }
+    }   
 
     handleChange = e => {
         this.setState({ [e.target.id]: e.target.value });
@@ -80,9 +81,13 @@ class RegisterVehicle extends React.Component { // Call it list car?
     }
 
     showRequests() {
-        for (let i = 0; i < this.state.notifications.length; i++) {
-            return <Request requestData={this.state.notifications[i]} drizzle={this.props.drizzle} />
+
+        if(this.state.notifications.length > 0) {
+            for (let i = 0; i < this.state.notifications.length; i++) {
+                return <Request requestData={this.state.notifications[i]} drizzle={this.props.drizzle } requestComponent={true} />
+            }    
         }
+        return ( <Paper><Typography variant="title">No requests yet</Typography></Paper> );
     }
 
     render() {
@@ -122,7 +127,7 @@ class RegisterVehicle extends React.Component { // Call it list car?
         else {
             return (
                 <div style={style.container}>
-                    <Grid item={3} style={style.inlineDiv}>
+                    <Grid style={style.inlineDiv}>
 
                         <Typography variant="display1">Requests</Typography>
                         {this.showRequests()}

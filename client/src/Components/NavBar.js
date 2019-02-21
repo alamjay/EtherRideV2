@@ -1,10 +1,10 @@
 import React from "react";
-import { AppBar, Toolbar, Typography, Grid } from '@material-ui/core/';
+import { AppBar, Toolbar, Typography, Grid, Button } from '@material-ui/core/';
 import { Link } from 'react-router-dom';
 
 const style = {
   navItems: {
-    color: 'inherit',
+    color: 'white',
     fontColor: 'white',
     textDecoration: 'none'
   },
@@ -12,6 +12,11 @@ const style = {
   title: {
     color: 'inherit',
     marginLeft: 20,
+    marginTop: 10
+  },
+
+  bar: {
+    backgroundColor: '#4286f4'
   }
 }
 
@@ -19,7 +24,7 @@ const NavBar = (props) => {
 
   return (
     <div>
-      <AppBar position="static">
+      <AppBar position="static" style={style.bar}>
         <Toolbar>
           <Grid container justify="space-between" spacing={16}>
             <Typography variant="title" style={style.title}>
@@ -27,13 +32,13 @@ const NavBar = (props) => {
           </Typography>
             <Grid container item md={3}>
               <Grid item md={3}>
-              <Link to="/" style={style.navItems}>Home</Link>
+              <Button><Link to="/" style={style.navItems}>Home</Link></Button>
               </Grid>
               <Grid item md={3}>
-              <Link to="/about" style={style.navItems}>About</Link>
+              <Button><Link to="/about" style={style.navItems}>About</Link></Button>
               </Grid>
               <Grid item md={3}>
-              <Link to="/RegisterVehicle" style={style.navItems}>My Car</Link>
+              <Button><Link to="/RegisterVehicle" style={style.navItems}>My Car</Link></Button>
               </Grid>
             </Grid>
           </Grid>
