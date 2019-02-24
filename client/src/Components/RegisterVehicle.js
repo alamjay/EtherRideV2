@@ -1,8 +1,7 @@
 import React from "react";
-import { TextField, Typography, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Card, Grid, Paper } from "@material-ui/core";
+import { TextField, Typography, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Paper } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Request from './Request';
-import { isWidthDown } from "@material-ui/core/withWidth";
 
 const style = {
     container: { paddingLeft: 200, paddingRight: 200, margin: 'auto' },
@@ -80,10 +79,10 @@ class RegisterVehicle extends React.Component { // Call it list car?
 
     showRequests = () => {
         const show = [];
-        console.log(this.state.notifications);
+        // console.log(this.state.notifications);
         // if(this.state.notifications.length > 0) {
             for (let i = 0; i < this.state.notifications.length; i++) {
-                show.push(<Request requestData={this.state.notifications[i]} drizzle={this.props.drizzle } requestComponent={true} />);
+                show.push(<Request key={i} requestData={this.state.notifications[i]} drizzle={this.props.drizzle } requestComponent={true} />);
             }   
         // }
         return ( show.length !==0 ? show : <Paper><Typography variant="title">No requests yet</Typography></Paper> );

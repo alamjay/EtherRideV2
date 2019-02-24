@@ -44,7 +44,11 @@ contract Vehicleshare {
     );
     
     event notifyDriver (
-        uint indexed rentalId
+        uint indexed rentalId,
+        string make,
+        string model,
+        address owner,
+        address driver
     );
     
     // Status of the vehicle 
@@ -142,12 +146,15 @@ contract Vehicleshare {
         return vehicleAccts;
     }
     
-    function acceptDriver(address payable driver) public {
-        // emit notifyDriver(rentalId);
-        driver.transfer(address(this).balance);
+    function acceptDriver(address driver, uint rentalId) public {
+        address owner = msg.sender;
+        string memory make = vehicles[owner].make;
+        string memory model = vehicles[owner].model;
+        emit notifyDriver(rentalId, make, model, owner, driver);
+        // driver.transfer(address(this).balance);
     }
     
-    function confirmReceived(address payable owner) public {
+    function confirmRequest(address payable owner) public {
         // rentals[rentalId].vehicle
         owner.transfer(address(this).balance);
     }

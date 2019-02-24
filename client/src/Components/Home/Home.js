@@ -37,7 +37,7 @@ class Home extends React.Component {
         const show = [];
         for (let i = 0; i < this.state.vehicles.length; i++) {
             // return <CarCard vehicle={this.state.vehicles[i]} openModal={this.onVehicleInfo}/>
-            show.push(<Grid item md={3}><CarCard key={i} vehicle={this.state.vehicles[i]} openModal={this.onVehicleInfo} /></Grid>);
+            show.push(<Grid item md={3} key={i}><CarCard vehicle={this.state.vehicles[i]} openModal={this.onVehicleInfo} /></Grid>);
         }
         return show;
     }

@@ -8,8 +8,8 @@ import VehicleInfo from "./Components/Home/VehicleInfo";
 import { BrowserRouter, Route } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Typography } from "@material-ui/core";
-import { relative } from "path";
 import About from "./Components/About";
+import Ride from "./Components/Ride";
 
 const style = {
   progress: {
@@ -26,8 +26,8 @@ const style = {
 }
 
 class App extends Component {
-  state = { loading: true, drizzleState: null, openModal: false, vehicles: [], notifications: [], 
-    address: null, selectedVehicle: null, requestId: null };
+  state = { loading: true, drizzleState: null, openModal: false, vehicles: [], notifications: [], driverNotifications: [],
+    address: null, selectedVehicle: null, requestId: null, confirmRequestId: null };
 
   onModalOpen = (data) => {
     this.setState({ selectedVehicle: data });
@@ -62,7 +62,7 @@ class App extends Component {
   }
 
   getRequest = data => {
-    const request = { rentalId: null, from: '', startDate: '', endDate: '' };
+    const request = { rentalId: null, from: null, startDate: null, endDate: null };
     request.rentalId = data.rentalId;
     request.from = data.driver;
     request.startDate = data.start_date_time;
@@ -70,7 +70,19 @@ class App extends Component {
     // const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
     if (request.rentalId !== null) {
       this.state.notifications.push({ request });
-      console.log(request);
+      // console.log(request);
+    }
+  }
+
+  getConfirmRequest = data => {
+    const confirmRequest = { rentalId: null, make: null, model: null, driver: null, owner: null };
+    confirmRequest.rentalId = data.rentalId;
+    confirmRequest.make = data.make;
+    confirmRequest.model = data.model;
+    confirmRequest.driver = data.driver;
+    confirmRequest.owner = data.owner;
+    if(confirmRequest.rentalId !== null) {
+      this.state.driverNotifications.push({ confirmRequest });
     }
   }
 
@@ -100,7 +112,6 @@ class App extends Component {
     this.saveVehicle(['', 'Audi', 'A7', '3', 'Uxbridge']);
     this.saveVehicle(['', 'VW', 'Polo', '1', 'Stratford']);
     // this.getRequest({rentalId: 0, driver: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', start_date_time:'19/02/2019 10:30', end_date_time:'19/02/2019 11:30'});
-
   }
 
   componentDidUpdate() {
@@ -118,6 +129,13 @@ class App extends Component {
       this.setState({ requestId: event.rentalId });
     });
 
+    this.props.drizzle.contracts.Vehicleshare.events.notifyDriver().on('data', event => {
+      if (event.rentalId !== this.state.confirmRequestId) {
+        this.getConfirmRequest(event.returnValues);
+      }
+      this.setState({ confirmRequestId: event.rentalId });
+
+    });
   }
 
   componentWillUnmount() {
@@ -149,6 +167,9 @@ class App extends Component {
             <Route path="/about" exact render={(routeProps) => (
               <About {...routeProps} />
             )} />
+            <Route path="/ride" exact render={(routeProps) => (
+              <Ride {...routeProps} notifications={this.state.driverNotifications} drizzle={this.props.drizzle}/>
+            )}/>
           </div>
         </BrowserRouter>
         {/* <RegisterVehicle drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} /> */}

@@ -17,6 +17,11 @@ const style = {
 
   bar: {
     backgroundColor: '#4286f4'
+  },
+
+  rightNav: {
+    position: 'relative',
+    marginRight: 100
   }
 }
 
@@ -26,11 +31,11 @@ const NavBar = (props) => {
     <div>
       <AppBar position="static" style={style.bar}>
         <Toolbar>
-          <Grid container justify="space-between" spacing={16}>
+          <Grid container justify="space-between">
             <Typography variant="title" style={style.title}>
               EtherRide
           </Typography>
-            <Grid container item md={3}>
+            <Grid container item md={3} style={style.rightNav}>
               <Grid item md={3}>
               <Button><Link to="/" style={style.navItems}>Home</Link></Button>
               </Grid>
@@ -39,6 +44,9 @@ const NavBar = (props) => {
               </Grid>
               <Grid item md={3}>
               <Button><Link to="/RegisterVehicle" style={style.navItems}>My Car</Link></Button>
+              </Grid>
+              <Grid item md={3}>
+              <Button><Link to="/ride" style={style.navItems}>My Ride</Link></Button>
               </Grid>
             </Grid>
           </Grid>
