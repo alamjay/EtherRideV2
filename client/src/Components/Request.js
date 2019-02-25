@@ -9,7 +9,7 @@ const style = {
 
 class Request extends React.Component {
 
-    state = {requestKey: null, executeOrder: false, requestComponent: this.props.requestComponent}
+    state = {requestKey: null, executeOrder: false, requestComponent: this.props.requestComponent, cancelRequest: false}
 
     componentDidMount() {
         // const contract = drizzle.contracts.Vehicleshare;
@@ -24,11 +24,20 @@ class Request extends React.Component {
                 1
                 // this.props.requestData.request.rentalId
             );
-        }
+        };
+
+        if(this.state.cancelRequest) {
+            this.setState({cancelRequest: false});
+            this.props.drizzle.contracts.Vehicleshare.methods.cancelRequest.cacheSend();
+        };
     }
 
     handleRequest = () => {
         this.setState({executeOrder: true, requestComponent: false});
+    }
+
+    cancelRequest = () => {
+        this.setState({ cancelRequest: true, requestComponent: false });
     }
 
     render() {
@@ -40,7 +49,7 @@ class Request extends React.Component {
                         <Typography>Start: {this.props.requestData.request.startDate}</Typography>
                         <Typography>End: {this.props.requestData.request.endDate}</Typography>
                         <Button onClick={this.handleRequest} style={style.successBtn}>Accept</Button>
-                        <Button style={style.rejectBtn}>Reject</Button>
+                        <Button onClick={this.cancelRequest} style={style.rejectBtn}>Reject</Button>
                     </Paper>    
                 </div>
             );    

@@ -15,10 +15,14 @@ const style = {
 
 class ConfirmRequest extends React.Component {
 
-    state={executeOrder: false, request: this.props.request.confirmRequest, requestComponent: this.props.requestComponent}
+    state={executeOrder: false, request: this.props.request.confirmRequest, requestComponent: this.props.requestComponent, cancelRequest: false};
 
     handleRequest = () => {
         this.setState({executeOrder: true, requestComponent: false});
+    }
+
+    cancelRequest = () => {
+        this.setState({cancelRequest: true, requestComponent: false});
     }
 
     componentDidUpdate(){
@@ -28,6 +32,12 @@ class ConfirmRequest extends React.Component {
                 this.state.request.owner
             );
         }
+
+        if(this.state.cancelRequest) {
+            this.setState({cancelRequest: false});
+            this.props.drizzle.contracts.Vehicleshare.methods.cancelRequest.cacheSend();
+        };
+
     }
 
     render() {
@@ -48,7 +58,7 @@ class ConfirmRequest extends React.Component {
                                     <Button style={style.successBtn} onClick={this.handleRequest}>Accept</Button>
                                     </Grid>
                                     <Grid item xs={1}>
-                                    <Button style={style.rejectBtn}>Reject</Button>
+                                    <Button style={style.rejectBtn} onClick={this.cancelRequest}>Reject</Button>
                                     </Grid>
                                     </Grid>
                                 </Grid>

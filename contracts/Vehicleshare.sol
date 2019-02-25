@@ -163,6 +163,10 @@ contract Vehicleshare {
         sendTo.transfer(msg.value);
     }
 
+    function cancelRequest() public payable {
+        msg.sender.transfer(address(this).balance);
+    }
+
     // function getBalance(address _user) public view returns (uint){
     //     return _user.balance;
     // }
