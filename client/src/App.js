@@ -11,6 +11,7 @@ import { Typography } from "@material-ui/core";
 import About from "./Components/About";
 import Ride from "./Components/Ride";
 
+
 const style = {
   progress: {
     position: 'absolute',
@@ -26,7 +27,8 @@ const style = {
 }
 
 class App extends Component {
-  state = { loading: true, drizzleState: null, openModal: false, vehicles: [], notifications: [], driverNotifications: [],
+  state = { loading: true, isUpdate: false, initialLoad: true, drizzleState: null, openModal: false, 
+    vehicles: JSON.parse(localStorage.getItem('vehicles')), notifications: [], driverNotifications: [],
     address: null, selectedVehicle: null, requestId: null, confirmRequestId: null };
 
   onModalOpen = (data) => {
@@ -52,26 +54,34 @@ class App extends Component {
   }
 
   saveVehicle = (data) => {
-    const vehicle = { id: '', make: '', model: '', price: 0, location: '' };
+    const vehicle = { id: '', make: '', model: '', price: 0, location: '', img: null };
     vehicle.id = data[0];
     vehicle.make = data[1];
     vehicle.model = data[2];
     vehicle.price = data[3];
     vehicle.location = data[4];
-    this.state.vehicles.push(vehicle);
+    vehicle.img = data[5] ? data[5] : null;
+    const vehicles = JSON.parse(localStorage.getItem('vehicles'));
+    vehicles.push(vehicle);
+    localStorage.setItem('vehicles', JSON.stringify(vehicles));
+    // this.state.vehicles.push(vehicle);
   }
 
   getRequest = data => {
-    const request = { rentalId: null, from: null, startDate: null, endDate: null };
+    const request = { rentalId: null, from: null, owner: null, startDate: null, endDate: null };
     request.rentalId = data.rentalId;
     request.from = data.driver;
+    request.owner = data.owner;
     request.startDate = data.start_date_time;
     request.endDate = data.end_date_time;
     // const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
-    if (request.rentalId !== null) {
-      this.state.notifications.push({ request });
-      // console.log(request);
-    }
+    // if (request.rentalId !== null) {
+      // this.state.notifications.push({ request });
+      const storageRequests = JSON.parse(localStorage.getItem('notifyOwner'));
+      storageRequests.push(request);
+      localStorage.setItem('notifyOwner', JSON.stringify(storageRequests));
+
+    // }
   }
 
   getConfirmRequest = data => {
@@ -82,7 +92,10 @@ class App extends Component {
     confirmRequest.driver = data.driver;
     confirmRequest.owner = data.owner;
     if(confirmRequest.rentalId !== null) {
-      this.state.driverNotifications.push({ confirmRequest });
+      // this.state.driverNotifications.push({ confirmRequest });
+      const storageConfirmRequest = JSON.parse(localStorage.getItem('notifyDriver'));
+      storageConfirmRequest.push(confirmRequest);
+      localStorage.setItem('notifyDriver', JSON.stringify(storageConfirmRequest));
     }
   }
 
@@ -104,14 +117,17 @@ class App extends Component {
         //   }
         //   this.setState({ address: event.address });
         // });
-
+        
       }
     });
-    this.saveVehicle(['0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', 'BMW', '3 series', '1', 'London']);
-    this.saveVehicle(['', 'Mercedes', 'C Class', '2', 'Essex']);
-    this.saveVehicle(['', 'Audi', 'A7', '3', 'Uxbridge']);
-    this.saveVehicle(['', 'VW', 'Polo', '1', 'Stratford']);
-    // this.getRequest({rentalId: 0, driver: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', start_date_time:'19/02/2019 10:30', end_date_time:'19/02/2019 11:30'});
+
+    // Adding vehicles to the local storage
+    // this.saveVehicle(['0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', 'BMW', '3 series', '1', 'London', {vehicleImg: 'images/bmw-3.png'}]);
+    // this.saveVehicle(['', 'Mercedes', 'C Class', '2', 'Essex', {vehicleImg: 'images/mercedes-c.jpg'}]);
+    // this.saveVehicle(['', 'Audi', 'A7', '3', 'Uxbridge', {vehicleImg: 'images/audi-a7.jpg'}]);
+    // this.saveVehicle(['', 'VW', 'Polo', '1', 'Stratford', {vehicleImg: 'images/vw-polo.png'}]);
+    
+    // localStorage.setItem('notifyOwner', JSON.stringify([]));
   }
 
   componentDidUpdate() {
@@ -119,23 +135,47 @@ class App extends Component {
       if (event.address !== this.state.address) {
         this.saveVehicle(event.returnValues);
       }
-      this.setState({ address: event.address });
+      this.setState({ address: event.address, isUpdate: true });
     });
 
     this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on('data', event => {
       if (event.rentalId !== this.state.requestId) {
         this.getRequest(event.returnValues);
       }
-      this.setState({ requestId: event.rentalId });
+      this.setState({ requestId: event.rentalId, isUpdate: true });
     });
 
     this.props.drizzle.contracts.Vehicleshare.events.notifyDriver().on('data', event => {
       if (event.rentalId !== this.state.confirmRequestId) {
         this.getConfirmRequest(event.returnValues);
       }
-      this.setState({ confirmRequestId: event.rentalId });
+      this.setState({ confirmRequestId: event.rentalId, isUpdate: true });
 
     });
+
+    if(this.state.isUpdate) {
+      this.setState({ 
+        isUpdate: false, 
+        vehicles: JSON.parse(localStorage.getItem('vehicles')),
+        notifications: JSON.parse(localStorage.getItem('notifyOwner')),
+        driverNotifications: JSON.parse(localStorage.getItem('notifyDriver'))
+      });
+    }
+
+    if(this.state.initialLoad) {
+      let getOwnerNotifications = JSON.parse(localStorage.getItem('notifyOwner'));
+      getOwnerNotifications = getOwnerNotifications.filter(notification => notification.owner === this.state.drizzleState.accounts[0]);
+      console.log(getOwnerNotifications);
+
+      let getDriverNotifications = JSON.parse(localStorage.getItem('notifyDriver'));
+      getDriverNotifications = getDriverNotifications.filter(notification => notification.owner === this.state.drizzleState.accounts[0]);
+      this.setState({ 
+        initialLoad: false, 
+        notifications: getOwnerNotifications, 
+        driverNotifications: getDriverNotifications,
+        isUpdate: true
+      });  
+    }
   }
 
   componentWillUnmount() {

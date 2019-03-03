@@ -8,7 +8,16 @@ const style = {
     leftDiv: { display: 'inline-block', maxWidth: '300', verticalAlign: 'top' },
     rightDiv: { display: 'inline-block', maxWidth: '150' },
     inlineDiv: { marginTop: 50 },
-    wrapper: { marginTop: 10 }
+    wrapper: { marginTop: 10 },
+    form: {
+        position: "absolute",
+        left: "50%",
+        top: "50%",
+        transform: "translate(-50%, -50%)"
+    },
+    textField: {
+        marginTop: 5
+    }
 }
 
 class RegisterVehicle extends React.Component { // Call it list car?
@@ -82,7 +91,7 @@ class RegisterVehicle extends React.Component { // Call it list car?
         // console.log(this.state.notifications);
         // if(this.state.notifications.length > 0) {
             for (let i = 0; i < this.state.notifications.length; i++) {
-                show.push(<Request key={i} requestData={this.state.notifications[i]} drizzle={this.props.drizzle } requestComponent={true} />);
+                show.push(<Request key={i} requestData={this.state.notifications[i]} drizzle={this.props.drizzle } drizzleState={this.props.drizzleState} requestComponent={true} />);
             }   
         // }
         return ( show.length !==0 ? show : <Paper><Typography variant="title">No requests yet</Typography></Paper> );
@@ -98,27 +107,32 @@ class RegisterVehicle extends React.Component { // Call it list car?
             // if(true) { // Testing
             return (
                 // <Button>Register My Vehicle</Button>
+                
                 <form
                     onSubmit={this.handleSubmit}
-                    style={{
-                        position: "absolute",
-                        left: "50%",
-                        top: "50%",
-                        transform: "translate(-50%, -50%)"
-                    }}
+                    style={style.form}
                 >
-                    <Typography>Enter the vehicle make: </Typography>
-                    <TextField id="make" onChange={this.handleChange} />
-
-                    <Typography>Enter the model:  </Typography>
-                    <TextField id="model" onChange={this.handleChange} />
-
-                    <Typography>Specify the price: </Typography>
-                    <TextField type="number" id="price" onChange={this.handleChange} />
-
-                    <Typography>Enter the location</Typography>
-                    <TextField id="location" onChange={this.handleChange} />
+                <Grid container spacing={12}>
+                    {/* <Typography>Enter the vehicle make: </Typography> */}
+                    <Grid item xs={12}>
+                    <TextField id="make" onChange={this.handleChange} label="Enter the vehicle make" style={style.textField}/>
+                    </Grid>
+                    <Grid item xs={12}>
+                    {/* <Typography>Enter the model:  </Typography> */}
+                    <TextField id="model" onChange={this.handleChange} label="Enter the model" style={style.textField}/>
+                    </Grid>
+                    <Grid item xs={12}>
+                    {/* <Typography>Specify the price: </Typography> */}
+                    <TextField type="number" id="price" onChange={this.handleChange} label="Specify the price (ETH)" style={style.textField}/>
+                    </Grid>
+                    <Grid item xs={12}>
+                    {/* <Typography>Enter the location</Typography> */}
+                    <TextField id="location" onChange={this.handleChange} label="Enter the location" style={style.textField} />
+                    </Grid>
+                    <Grid item xs={12} style={style.textField}>
                     <Button type="submit">Submit</Button>
+                    </Grid>
+                    </Grid>
                 </form>
             );
         }

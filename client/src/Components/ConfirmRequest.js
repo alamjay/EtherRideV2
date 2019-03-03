@@ -29,13 +29,23 @@ class ConfirmRequest extends React.Component {
         if(this.state.executeOrder) {
             this.setState({executeOrder: false});
             this.props.drizzle.contracts.Vehicleshare.methods.confirmRequest.cacheSend(
-                this.state.request.owner
+                this.props.request.owner
             );
+
+            let notifications = JSON.parse(localStorage.getItem('notifyDriver'));
+            notifications = notifications.filter(notification => notification.rentalId !== this.props.request.rentalId);
+            localStorage.setItem('notifyDriver', JSON.stringify(notifications));
+
         }
 
         if(this.state.cancelRequest) {
             this.setState({cancelRequest: false});
             this.props.drizzle.contracts.Vehicleshare.methods.cancelRequest.cacheSend();
+            
+            let notifications = JSON.parse(localStorage.getItem('notifyDriver'));
+            notifications = notifications.filter(notification => notification.rentalId !== this.props.request.rentalId);
+            localStorage.setItem('notifyDriver', JSON.stringify(notifications));
+
         };
 
     }
@@ -52,7 +62,7 @@ class ConfirmRequest extends React.Component {
                                     <img src={pic} style={style.image} alt="" />
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Typography variant="title">{this.state.request.make} {this.state.request.model}</Typography>
+                                    <Typography variant="title">{this.props.request.make} {this.props.request.model}</Typography>
                                     <Grid container spacing={16}>
                                     <Grid item xs={10}>
                                     <Button style={style.successBtn} onClick={this.handleRequest}>Accept</Button>

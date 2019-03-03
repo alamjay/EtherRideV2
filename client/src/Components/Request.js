@@ -19,16 +19,24 @@ class Request extends React.Component {
     componentDidUpdate(){
         if(this.state.executeOrder) {
             this.setState({executeOrder: false});
-            this.props.drizzle.contracts.Vehicleshare.methods.acceptDriver.cacheSend(
-                this.props.requestData.request.from,
-                1
-                // this.props.requestData.request.rentalId
+            const stackId = this.props.drizzle.contracts.Vehicleshare.methods.acceptDriver.cacheSend(
+                this.props.requestData.from,
+                this.props.requestData.rentalId
             );
+            
+            let notifications = JSON.parse(localStorage.getItem('notifyOwner'));
+            notifications = notifications.filter(notification => notification.rentalId !== this.props.requestData.rentalId);
+            localStorage.setItem('notifyOwner', JSON.stringify(notifications));
         };
 
         if(this.state.cancelRequest) {
-            this.setState({cancelRequest: false});
+            this.setState({cancelRequest: false, executeOrder: false});
             this.props.drizzle.contracts.Vehicleshare.methods.cancelRequest.cacheSend();
+
+            let notifications = JSON.parse(localStorage.getItem('notifyOwner'));
+            notifications = notifications.filter(notification => notification.rentalId !== this.props.requestData.rentalId);
+            localStorage.setItem('notifyOwner', JSON.stringify(notifications));
+
         };
     }
 
@@ -45,9 +53,9 @@ class Request extends React.Component {
             return (
                 <div>
                     <Paper style={style.container}>
-                        <Typography>From: {this.props.requestData.request.from} </Typography>
-                        <Typography>Start: {this.props.requestData.request.startDate}</Typography>
-                        <Typography>End: {this.props.requestData.request.endDate}</Typography>
+                        <Typography>From: {this.props.requestData.from} </Typography>
+                        <Typography>Start: {this.props.requestData.startDate}</Typography>
+                        <Typography>End: {this.props.requestData.endDate}</Typography>
                         <Button onClick={this.handleRequest} style={style.successBtn}>Accept</Button>
                         <Button onClick={this.cancelRequest} style={style.rejectBtn}>Reject</Button>
                     </Paper>    
