@@ -9,24 +9,34 @@ const style = {
 
 class Request extends React.Component {
 
-    state = {requestKey: null, executeOrder: false, requestComponent: this.props.requestComponent, cancelRequest: false}
+    state = {requestKey: null, executeOrder: false, requestComponent: this.props.requestComponent, cancelRequest: false, manageRequest: false}
 
     componentDidMount() {
         // const contract = drizzle.contracts.Vehicleshare;
         // drizzle.contracts.SimpleStorage.methods.storedData.cacheCall()
+
+        // const requestKey = this.props.drizzle.contracts.Vehicleshare.methods.checkOwnerRequest.cacheCall(
+        //     this.props.requestData.owner,
+        //     this.props.requestData.rentalId
+        // );
+        // this.setState({requestKey});
     }
 
     componentDidUpdate(){
+        let rental = JSON.parse(localStorage.getItem('rentals'));
+        rental = rental.find(rental => rental.owner === this.props.drizzleState.accounts[0]);
+        
+        //     let notifications = JSON.parse(localStorage.getItem('notifyOwner'));
+        //     notifications = notifications.filter(notification => notification.rentalId !== this.props.requestData.rentalId);
+        //     localStorage.setItem('notifyOwner', JSON.stringify(notifications));    
+        //     this.setState({requestComponent: false});
+
         if(this.state.executeOrder) {
             this.setState({executeOrder: false});
-            const stackId = this.props.drizzle.contracts.Vehicleshare.methods.acceptDriver.cacheSend(
+            this.props.drizzle.contracts.Vehicleshare.methods.acceptDriver.cacheSend(
                 this.props.requestData.from,
                 this.props.requestData.rentalId
             );
-            
-            let notifications = JSON.parse(localStorage.getItem('notifyOwner'));
-            notifications = notifications.filter(notification => notification.rentalId !== this.props.requestData.rentalId);
-            localStorage.setItem('notifyOwner', JSON.stringify(notifications));
         };
 
         if(this.state.cancelRequest) {
@@ -36,11 +46,16 @@ class Request extends React.Component {
             let notifications = JSON.parse(localStorage.getItem('notifyOwner'));
             notifications = notifications.filter(notification => notification.rentalId !== this.props.requestData.rentalId);
             localStorage.setItem('notifyOwner', JSON.stringify(notifications));
-
         };
     }
 
     handleRequest = () => {
+        // let confirmOwnerActions = JSON.parse(localStorage.getItem('notifyDriver'));
+        // confirmOwnerActions = confirmOwnerActions.find(notification => notification.owner === this.props.drizzleState.accounts[0]);
+        // if(confirmOwnerActions) {
+        //     this.setState({manageRequest});            
+        // }
+        
         this.setState({executeOrder: true, requestComponent: false});
     }
 
@@ -49,6 +64,19 @@ class Request extends React.Component {
     }
 
     render() {
+        // const manageRequest = this.props.drizzleState.contracts.Vehicleshare.checkOwnerRequest[this.state.requestKey];
+
+        // if(manageRequest === undefined) {
+        //     return <div></div>;
+        // }
+        // if(manageRequest.value === false) {
+        //     console.log(manageRequest);
+        //     // this.setState({manageRequest: manageRequest.value});
+        // }
+        // if(manageRequest.value === true){ 
+        //     console.log(manageRequest);
+        // }
+
         if(this.state.requestComponent) {
             return (
                 <div>
@@ -60,7 +88,7 @@ class Request extends React.Component {
                         <Button onClick={this.cancelRequest} style={style.rejectBtn}>Reject</Button>
                     </Paper>    
                 </div>
-            );    
+            );
         }
         return <div></div>
     }

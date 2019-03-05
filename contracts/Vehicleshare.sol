@@ -35,6 +35,18 @@ contract Vehicleshare {
         string _location
     );
     
+    event getRentals (
+        uint indexed id,
+        address driver,
+        address vehicle,
+        string start_date_time,
+        string end_date_time,
+        string location,
+        uint price,
+        uint cost,
+        bool notifyOwner,
+        bool notifyDriver
+    );
     event notifyOwner (
         uint indexed rentalId,
         address indexed driver,
@@ -99,6 +111,7 @@ contract Vehicleshare {
         // address driver = msg.sender; 
         rentals[rentalseq] = Rental(msg.sender, owner, start_date_time, end_date_time, vehicles[owner].location, msg.value);
         emit notifyOwner(rentalseq, msg.sender, owner, start_date_time, end_date_time);
+        emit getRentals(rentalseq, msg.sender, owner, start_date_time, end_date_time, vehicles[owner].location, vehicles[owner].price, msg.value, true, false);
     }
     
     function getHire(uint rentalNo) public view returns (address, address, string memory, string memory, string memory, uint) {
@@ -142,30 +155,49 @@ contract Vehicleshare {
         return vehicles[owner].registered;
     }
 
-    function vehicleList() public view returns(address[] memory) {
-        return vehicleAccts;
-    }
+    // function vehicleList() public view returns(address[] memory) {
+    //     return vehicleAccts;
+    // }
     
-    function acceptDriver(address driver, uint rentalId) public {
+    function acceptDriver(address driver, uint rentalId) public returns (bool) {
         address owner = msg.sender;
         string memory make = vehicles[owner].make;
         string memory model = vehicles[owner].model;
         emit notifyDriver(rentalId, make, model, owner, driver);
         // driver.transfer(address(this).balance);
+        return true;
     }
-    
+
     function confirmRequest(address payable owner) public {
         // rentals[rentalId].vehicle
         owner.transfer(address(this).balance);
     }
 
-    function makePayment(address payable sendTo) public payable {
-        sendTo.transfer(msg.value);
-    }
+    // function makePayment(address payable sendTo) public payable {
+    //     sendTo.transfer(msg.value);
+    // }
 
     function cancelRequest() public payable {
         msg.sender.transfer(address(this).balance);
     }
+
+    // function checkOwnerRequest(address owner, uint rentalId) public view returns (bool) {
+    //     // Rental storage rental = rentals[rentalId];
+    //     if(rentals[rentalId].vehicle == owner){
+    //         return true;
+    //     }else {
+    //         return false;
+    //     }
+    // }
+
+    // function checkDriverRequest(address driver, uint rentalId) public view returns (bool) {
+    //     // Rental storage rental = rentals[rentalId];
+    //     if(rentals[rentalId].driver == driver){
+    //         return true;
+    //     }else {
+    //         return false;
+    //     }
+    // }
 
     // function getBalance(address _user) public view returns (uint){
     //     return _user.balance;

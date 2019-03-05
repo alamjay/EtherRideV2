@@ -51,6 +51,7 @@ class ConfirmRequest extends React.Component {
     }
 
     render() {
+        console.log(this.props.request);
 
         if(this.state.requestComponent){
             return (

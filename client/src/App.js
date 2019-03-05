@@ -27,9 +27,11 @@ const style = {
 }
 
 class App extends Component {
-  state = { loading: true, isUpdate: false, initialLoad: true, drizzleState: null, openModal: false, 
+  state = {
+    loading: true, isUpdate: false, initialLoad: true, drizzleState: null, openModal: false,
     vehicles: JSON.parse(localStorage.getItem('vehicles')), notifications: [], driverNotifications: [],
-    address: null, selectedVehicle: null, requestId: null, confirmRequestId: null };
+    address: null, selectedVehicle: null, requestId: null, confirmRequestId: null, rentals: null
+  };
 
   onModalOpen = (data) => {
     this.setState({ selectedVehicle: data });
@@ -67,6 +69,25 @@ class App extends Component {
     // this.state.vehicles.push(vehicle);
   }
 
+  // getRental = data => {
+  //   const rental = {id: null, driver: null, owner: null, 
+  //   startDateTime: null, endDateTime: null, location: null,
+  //   price: null, cost: null, notifyOwner: null, notifyDriver: null};
+  //   rental.id = data.id;
+  //   rental.driver = data.driver;
+  //   rental.owner = data.vehicle;
+  //   rental.startDateTime = data.start_date_time;
+  //   rental.endDateTime = data.end_date_time;
+  //   rental.location = data.location;
+  //   rental.price = data.price;
+  //   rental.cost = data.cost;
+  //   rental.notifyOwner = data.notifyOwner;
+  //   rental.notifyDriver = data.notifyDriver;
+  //   const rentals = JSON.parse(localStorage.getItem('rentals'));
+  //   rentals.push(rental);
+  //   localStorage.setItem('rentals', JSON.stringify(rentals));
+  // }
+
   getRequest = data => {
     const request = { rentalId: null, from: null, owner: null, startDate: null, endDate: null };
     request.rentalId = data.rentalId;
@@ -76,10 +97,10 @@ class App extends Component {
     request.endDate = data.end_date_time;
     // const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
     // if (request.rentalId !== null) {
-      // this.state.notifications.push({ request });
-      const storageRequests = JSON.parse(localStorage.getItem('notifyOwner'));
-      storageRequests.push(request);
-      localStorage.setItem('notifyOwner', JSON.stringify(storageRequests));
+    // this.state.notifications.push({ request });
+    const storageRequests = JSON.parse(localStorage.getItem('notifyOwner'));
+    storageRequests.push(request);
+    localStorage.setItem('notifyOwner', JSON.stringify(storageRequests));
 
     // }
   }
@@ -91,7 +112,7 @@ class App extends Component {
     confirmRequest.model = data.model;
     confirmRequest.driver = data.driver;
     confirmRequest.owner = data.owner;
-    if(confirmRequest.rentalId !== null) {
+    if (confirmRequest.rentalId !== null) {
       // this.state.driverNotifications.push({ confirmRequest });
       const storageConfirmRequest = JSON.parse(localStorage.getItem('notifyDriver'));
       storageConfirmRequest.push(confirmRequest);
@@ -117,8 +138,9 @@ class App extends Component {
         //   }
         //   this.setState({ address: event.address });
         // });
-        
+
       }
+
     });
 
     // Adding vehicles to the local storage
@@ -126,7 +148,7 @@ class App extends Component {
     // this.saveVehicle(['', 'Mercedes', 'C Class', '2', 'Essex', {vehicleImg: 'images/mercedes-c.jpg'}]);
     // this.saveVehicle(['', 'Audi', 'A7', '3', 'Uxbridge', {vehicleImg: 'images/audi-a7.jpg'}]);
     // this.saveVehicle(['', 'VW', 'Polo', '1', 'Stratford', {vehicleImg: 'images/vw-polo.png'}]);
-    
+
     // localStorage.setItem('notifyOwner', JSON.stringify([]));
   }
 
@@ -137,6 +159,14 @@ class App extends Component {
       }
       this.setState({ address: event.address, isUpdate: true });
     });
+
+    // this.props.drizzle.contracts.Vehicleshare.events.getRentals().on('data', event => {
+    //   if(event.rentalId !== this.state.rentals) {
+    //     this.getRental(event.returnValues);
+    //   }
+    //   this.setState({rentals: event.rentalId});
+    // });
+
 
     this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on('data', event => {
       if (event.rentalId !== this.state.requestId) {
@@ -153,28 +183,27 @@ class App extends Component {
 
     });
 
-    if(this.state.isUpdate) {
-      this.setState({ 
-        isUpdate: false, 
+    if (this.state.isUpdate) {
+      this.setState({
+        isUpdate: false,
         vehicles: JSON.parse(localStorage.getItem('vehicles')),
         notifications: JSON.parse(localStorage.getItem('notifyOwner')),
         driverNotifications: JSON.parse(localStorage.getItem('notifyDriver'))
       });
     }
 
-    if(this.state.initialLoad) {
+    if (this.state.initialLoad) {
       let getOwnerNotifications = JSON.parse(localStorage.getItem('notifyOwner'));
       getOwnerNotifications = getOwnerNotifications.filter(notification => notification.owner === this.state.drizzleState.accounts[0]);
-      console.log(getOwnerNotifications);
 
       let getDriverNotifications = JSON.parse(localStorage.getItem('notifyDriver'));
       getDriverNotifications = getDriverNotifications.filter(notification => notification.owner === this.state.drizzleState.accounts[0]);
-      this.setState({ 
-        initialLoad: false, 
-        notifications: getOwnerNotifications, 
+      this.setState({
+        initialLoad: false,
+        notifications: getOwnerNotifications,
         driverNotifications: getDriverNotifications,
         isUpdate: true
-      });  
+      });
     }
   }
 
@@ -183,6 +212,7 @@ class App extends Component {
   }
 
   render() {
+
     if (this.state.loading) return (
       <div style={style.progress}>
         <CircularProgress disableShrink />
@@ -208,8 +238,8 @@ class App extends Component {
               <About {...routeProps} />
             )} />
             <Route path="/ride" exact render={(routeProps) => (
-              <Ride {...routeProps} notifications={this.state.driverNotifications} drizzle={this.props.drizzle}/>
-            )}/>
+              <Ride {...routeProps} notifications={this.state.driverNotifications} drizzle={this.props.drizzle} />
+            )} />
           </div>
         </BrowserRouter>
         {/* <RegisterVehicle drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} /> */}

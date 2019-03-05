@@ -52,8 +52,8 @@ class Home extends React.Component {
         // const dateAndTimePicker = this.props.dateAndTimePicker;
         const { drizzle } = this.props;
         const contract = drizzle.contracts.Vehicleshare;
-        const listKey = contract.methods["vehicleList"].cacheCall();
-        this.setState({ listKey });
+        // const listKey = contract.methods["vehicleList"].cacheCall();
+        // this.setState({ listKey });
     };
 
     componentDidUpdate() {

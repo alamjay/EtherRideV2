@@ -32,6 +32,7 @@ class RegisterVehicle extends React.Component { // Call it list car?
         const contract = drizzle.contracts.Vehicleshare;
         // const dataKey = contract.methods["getVehicle"].cacheCall(drizzleState.accounts[0]);
         const registeredKey = contract.methods["isRegistered"].cacheCall(drizzleState.accounts[0]);
+
         // this.setState({ dataKey });
         this.setState({ registeredKey });
 
@@ -99,12 +100,22 @@ class RegisterVehicle extends React.Component { // Call it list car?
 
     render() {
         const { Vehicleshare } = this.props.drizzleState.contracts;
-        const isReg = Vehicleshare.isRegistered[this.state.registeredKey];
+        let isReg = Vehicleshare.isRegistered[this.state.registeredKey];
+
         if (isReg === undefined) {
             return <div>Loading...</div>
         }
+
+        if(!isReg.value) { // verify from local storage vehicle is registered
+            const vehicles = JSON.parse(localStorage.getItem('vehicles'));
+            const checkVehicle = vehicles.find(vehicle => vehicle.id === isReg.args[0]);
+            isReg.value = checkVehicle ? true : false;    
+        }
+
         if (isReg.value === false) { // Check to see whether the user already registered the car
+
             // if(true) { // Testing
+            // console.log(isReg.args[0]);
             return (
                 // <Button>Register My Vehicle</Button>
                 
@@ -112,7 +123,7 @@ class RegisterVehicle extends React.Component { // Call it list car?
                     onSubmit={this.handleSubmit}
                     style={style.form}
                 >
-                <Grid container spacing={12}>
+                <Grid container spacing={16}>
                     {/* <Typography>Enter the vehicle make: </Typography> */}
                     <Grid item xs={12}>
                     <TextField id="make" onChange={this.handleChange} label="Enter the vehicle make" style={style.textField}/>
