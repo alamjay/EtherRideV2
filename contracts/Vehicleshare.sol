@@ -67,7 +67,7 @@ contract Vehicleshare {
     enum VehicleState { active, inactive, idle }
 
     // mapping to store the rentals
-    mapping (uint => Rental) rentals;
+    mapping (uint => Rental) public rentals;
 
     // mapping to store the vehicles
     mapping (address => Vehicle) public vehicles;
@@ -79,7 +79,7 @@ contract Vehicleshare {
     uint public numVehicles = 0;
     
     // sequence number of rentals
-    uint rentalseq;
+    uint public rentalseq;
     
     // number of owners with listing of vehicles
     address[] public vehicleAccts;
@@ -206,5 +206,10 @@ contract Vehicleshare {
     // function balanceOf() public view returns(uint) {
     //     return address(this).balance;
     // }
+
+    function test(uint num) public returns(uint){
+        rentalseq = num;
+        return rentalseq;
+    }
 
 }
