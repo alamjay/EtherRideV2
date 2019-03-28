@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./App.css";
-// import Login from "./Components/Login";
 import NavBar from "./Components/NavBar";
 import RegisterVehicle from './Components/RegisterVehicle';
 import Home from "./Components/Home/Home";
@@ -11,7 +10,7 @@ import { Typography } from "@material-ui/core";
 import About from "./Components/About";
 import Ride from "./Components/Ride";
 
-
+// style for the loading component
 const style = {
   progress: {
     position: 'absolute',
@@ -33,14 +32,15 @@ class App extends Component {
     address: null, selectedVehicle: null, requestId: null, confirmRequestId: null, rentals: null
   };
 
+  // Updating the states to open the vehicle info component
   onModalOpen = (data) => {
     this.setState({ selectedVehicle: data });
-    // this.setState( { openModal: isOpen });
     this.setState(state => ({
       openModal: !state.openModal
     }));
   }
 
+  // Action to show the vehicle info component
   viewModal() {
     if (this.state.openModal) {
       return (
@@ -55,6 +55,7 @@ class App extends Component {
     }
   }
 
+  // Saving the vehicles data onto the local storage
   saveVehicle = (data) => {
     const vehicle = { id: '', make: '', model: '', price: 0, location: '', img: null };
     vehicle.id = data[0];
@@ -66,28 +67,9 @@ class App extends Component {
     const vehicles = JSON.parse(localStorage.getItem('vehicles'));
     vehicles.push(vehicle);
     localStorage.setItem('vehicles', JSON.stringify(vehicles));
-    // this.state.vehicles.push(vehicle);
   }
 
-  // getRental = data => {
-  //   const rental = {id: null, driver: null, owner: null, 
-  //   startDateTime: null, endDateTime: null, location: null,
-  //   price: null, cost: null, notifyOwner: null, notifyDriver: null};
-  //   rental.id = data.id;
-  //   rental.driver = data.driver;
-  //   rental.owner = data.vehicle;
-  //   rental.startDateTime = data.start_date_time;
-  //   rental.endDateTime = data.end_date_time;
-  //   rental.location = data.location;
-  //   rental.price = data.price;
-  //   rental.cost = data.cost;
-  //   rental.notifyOwner = data.notifyOwner;
-  //   rental.notifyDriver = data.notifyDriver;
-  //   const rentals = JSON.parse(localStorage.getItem('rentals'));
-  //   rentals.push(rental);
-  //   localStorage.setItem('rentals', JSON.stringify(rentals));
-  // }
-
+  // get requests to hire vehicle from the local storage 
   getRequest = data => {
     const request = { rentalId: null, from: null, owner: null, startDate: null, endDate: null };
     request.rentalId = data.rentalId;
@@ -95,16 +77,12 @@ class App extends Component {
     request.owner = data.owner;
     request.startDate = data.start_date_time;
     request.endDate = data.end_date_time;
-    // const request = { rentalId: 1, from: '0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', startDate: '19/02/2019 10:30', endDate: '19/02/2019 11:30' };
-    // if (request.rentalId !== null) {
-    // this.state.notifications.push({ request });
     const storageRequests = JSON.parse(localStorage.getItem('notifyOwner'));
     storageRequests.push(request);
     localStorage.setItem('notifyOwner', JSON.stringify(storageRequests));
-
-    // }
   }
 
+  // get requests for the driver to confirm vehicle acess
   getConfirmRequest = data => {
     const confirmRequest = { rentalId: null, make: null, model: null, driver: null, owner: null };
     confirmRequest.rentalId = data.rentalId;
@@ -113,7 +91,6 @@ class App extends Component {
     confirmRequest.driver = data.driver;
     confirmRequest.owner = data.owner;
     if (confirmRequest.rentalId !== null) {
-      // this.state.driverNotifications.push({ confirmRequest });
       const storageConfirmRequest = JSON.parse(localStorage.getItem('notifyDriver'));
       storageConfirmRequest.push(confirmRequest);
       localStorage.setItem('notifyDriver', JSON.stringify(storageConfirmRequest));
@@ -131,28 +108,12 @@ class App extends Component {
       // check to see if it's ready, if so, update local component state
       if (drizzleState.drizzleStatus.initialized) {
         this.setState({ loading: false, drizzleState });
-
-        // this.props.drizzle.contracts.Vehicleshare.events.getVeh().on('data', event => {
-        //   if (event.address !== this.state.address) {
-        //     this.saveVehicle(event.returnValues);
-        //   }
-        //   this.setState({ address: event.address });
-        // });
-
       }
-
     });
-
-    // Adding vehicles to the local storage
-    // this.saveVehicle(['0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E', 'BMW', '3 series', '1', 'London', {vehicleImg: 'images/bmw-3.png'}]);
-    // this.saveVehicle(['', 'Mercedes', 'C Class', '2', 'Essex', {vehicleImg: 'images/mercedes-c.jpg'}]);
-    // this.saveVehicle(['', 'Audi', 'A7', '3', 'Uxbridge', {vehicleImg: 'images/audi-a7.jpg'}]);
-    // this.saveVehicle(['', 'VW', 'Polo', '1', 'Stratford', {vehicleImg: 'images/vw-polo.png'}]);
-
-    // localStorage.setItem('notifyOwner', JSON.stringify([]));
   }
 
   componentDidUpdate() {
+    // event listener for getting new vehicles registered
     this.props.drizzle.contracts.Vehicleshare.events.getVeh().on('data', event => {
       if (event.address !== this.state.address) {
         this.saveVehicle(event.returnValues);
@@ -160,14 +121,7 @@ class App extends Component {
       this.setState({ address: event.address, isUpdate: true });
     });
 
-    // this.props.drizzle.contracts.Vehicleshare.events.getRentals().on('data', event => {
-    //   if(event.rentalId !== this.state.rentals) {
-    //     this.getRental(event.returnValues);
-    //   }
-    //   this.setState({rentals: event.rentalId});
-    // });
-
-
+    // event listener for new requests to reserve vehicle 
     this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on('data', event => {
       if (event.rentalId !== this.state.requestId) {
         this.getRequest(event.returnValues);
@@ -175,6 +129,7 @@ class App extends Component {
       this.setState({ requestId: event.rentalId, isUpdate: true });
     });
 
+    // event listener for requests to confirm vehicle access by the driver
     this.props.drizzle.contracts.Vehicleshare.events.notifyDriver().on('data', event => {
       if (event.rentalId !== this.state.confirmRequestId) {
         this.getConfirmRequest(event.returnValues);
@@ -183,6 +138,7 @@ class App extends Component {
 
     });
 
+    // get data from local storage on update
     if (this.state.isUpdate) {
       this.setState({
         isUpdate: false,
@@ -192,6 +148,7 @@ class App extends Component {
       });
     }
 
+    // populating the data when the home component renders
     if (this.state.initialLoad) {
       let getOwnerNotifications = JSON.parse(localStorage.getItem('notifyOwner'));
       getOwnerNotifications = getOwnerNotifications.filter(notification => notification.owner === this.state.drizzleState.accounts[0]);
@@ -207,20 +164,25 @@ class App extends Component {
     }
   }
 
+  // unsubscribing drizzle  
   componentWillUnmount() {
     this.unsubscribe();
   }
 
   render() {
-
+    // render the loading component
     if (this.state.loading) return (
       <div style={style.progress}>
         <CircularProgress disableShrink />
         <Typography variant="display1">Loading...</Typography>
       </div>
     );
+
+    // rendering the app component
     return (
       <div className="App">
+      
+      {/* Router for navigation between components */}
         <BrowserRouter>
           <div>
             <NavBar />
@@ -242,13 +204,8 @@ class App extends Component {
             )} />
           </div>
         </BrowserRouter>
-        {/* <RegisterVehicle drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} /> */}
-        {/* <Login drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/> */}
-        {/* <Home 
-        drizzle={this.props.drizzle} 
-        drizzleState={this.state.drizzleState} 
-        DateAndTimePickers={this.props.DateAndTimePickers} 
-        onModal={this.onModalOpen} /> */}
+        
+        {/* render vehicle info modal  */}
         {this.viewModal()}
       </div>
     );

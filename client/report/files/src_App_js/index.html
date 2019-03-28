@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - src\App.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>src\App.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">70.74</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">258</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">38.34</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">2.17</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">import React, { Component } from &quot;react&quot;;
+import &quot;./App.css&quot;;
+// import Login from &quot;./Components/Login&quot;;
+import NavBar from &quot;./Components/NavBar&quot;;
+import RegisterVehicle from &#039;./Components/RegisterVehicle&#039;;
+import Home from &quot;./Components/Home/Home&quot;;
+import VehicleInfo from &quot;./Components/Home/VehicleInfo&quot;;
+import { BrowserRouter, Route } from &#039;react-router-dom&#039;;
+import CircularProgress from &#039;@material-ui/core/CircularProgress&#039;;
+import { Typography } from &quot;@material-ui/core&quot;;
+import About from &quot;./Components/About&quot;;
+import Ride from &quot;./Components/Ride&quot;;
+
+
+const style = {
+  progress: {
+    position: &#039;absolute&#039;,
+    margin: &#039;auto&#039;,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    width: 70,
+    height: 70,
+    textAlign: &#039;center&#039;
+  },
+}
+
+class App extends Component {
+  state = {
+    loading: true, isUpdate: false, initialLoad: true, drizzleState: null, openModal: false,
+    vehicles: JSON.parse(localStorage.getItem(&#039;vehicles&#039;)), notifications: [], driverNotifications: [],
+    address: null, selectedVehicle: null, requestId: null, confirmRequestId: null, rentals: null
+  };
+
+  onModalOpen = (data) =&gt; {
+    this.setState({ selectedVehicle: data });
+    // this.setState( { openModal: isOpen });
+    this.setState(state =&gt; ({
+      openModal: !state.openModal
+    }));
+  }
+
+  viewModal() {
+    if (this.state.openModal) {
+      return (
+        &lt;VehicleInfo
+          drizzle={this.props.drizzle}
+          drizzleState={this.state.drizzleState}
+          requestModal={this.onModalOpen}
+          openModal={this.state.openModal}
+          vehicleData={this.state.selectedVehicle}
+        /&gt;
+      );
+    }
+  }
+
+  saveVehicle = (data) =&gt; {
+    const vehicle = { id: &#039;&#039;, make: &#039;&#039;, model: &#039;&#039;, price: 0, location: &#039;&#039;, img: null };
+    vehicle.id = data[0];
+    vehicle.make = data[1];
+    vehicle.model = data[2];
+    vehicle.price = data[3];
+    vehicle.location = data[4];
+    vehicle.img = data[5] ? data[5] : null;
+    const vehicles = JSON.parse(localStorage.getItem(&#039;vehicles&#039;));
+    vehicles.push(vehicle);
+    localStorage.setItem(&#039;vehicles&#039;, JSON.stringify(vehicles));
+    // this.state.vehicles.push(vehicle);
+  }
+
+  // getRental = data =&gt; {
+  //   const rental = {id: null, driver: null, owner: null, 
+  //   startDateTime: null, endDateTime: null, location: null,
+  //   price: null, cost: null, notifyOwner: null, notifyDriver: null};
+  //   rental.id = data.id;
+  //   rental.driver = data.driver;
+  //   rental.owner = data.vehicle;
+  //   rental.startDateTime = data.start_date_time;
+  //   rental.endDateTime = data.end_date_time;
+  //   rental.location = data.location;
+  //   rental.price = data.price;
+  //   rental.cost = data.cost;
+  //   rental.notifyOwner = data.notifyOwner;
+  //   rental.notifyDriver = data.notifyDriver;
+  //   const rentals = JSON.parse(localStorage.getItem(&#039;rentals&#039;));
+  //   rentals.push(rental);
+  //   localStorage.setItem(&#039;rentals&#039;, JSON.stringify(rentals));
+  // }
+
+  getRequest = data =&gt; {
+    const request = { rentalId: null, from: null, owner: null, startDate: null, endDate: null };
+    request.rentalId = data.rentalId;
+    request.from = data.driver;
+    request.owner = data.owner;
+    request.startDate = data.start_date_time;
+    request.endDate = data.end_date_time;
+    // const request = { rentalId: 1, from: &#039;0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E&#039;, startDate: &#039;19/02/2019 10:30&#039;, endDate: &#039;19/02/2019 11:30&#039; };
+    // if (request.rentalId !== null) {
+    // this.state.notifications.push({ request });
+    const storageRequests = JSON.parse(localStorage.getItem(&#039;notifyOwner&#039;));
+    storageRequests.push(request);
+    localStorage.setItem(&#039;notifyOwner&#039;, JSON.stringify(storageRequests));
+
+    // }
+  }
+
+  getConfirmRequest = data =&gt; {
+    const confirmRequest = { rentalId: null, make: null, model: null, driver: null, owner: null };
+    confirmRequest.rentalId = data.rentalId;
+    confirmRequest.make = data.make;
+    confirmRequest.model = data.model;
+    confirmRequest.driver = data.driver;
+    confirmRequest.owner = data.owner;
+    if (confirmRequest.rentalId !== null) {
+      // this.state.driverNotifications.push({ confirmRequest });
+      const storageConfirmRequest = JSON.parse(localStorage.getItem(&#039;notifyDriver&#039;));
+      storageConfirmRequest.push(confirmRequest);
+      localStorage.setItem(&#039;notifyDriver&#039;, JSON.stringify(storageConfirmRequest));
+    }
+  }
+
+  componentDidMount() {
+    const { drizzle } = this.props;
+
+    // subscribe to changes in the store
+    this.unsubscribe = drizzle.store.subscribe(() =&gt; {
+      // every time the store updates, grab the state from drizzle
+      const drizzleState = drizzle.store.getState();
+
+      // check to see if it&#039;s ready, if so, update local component state
+      if (drizzleState.drizzleStatus.initialized) {
+        this.setState({ loading: false, drizzleState });
+
+        // this.props.drizzle.contracts.Vehicleshare.events.getVeh().on(&#039;data&#039;, event =&gt; {
+        //   if (event.address !== this.state.address) {
+        //     this.saveVehicle(event.returnValues);
+        //   }
+        //   this.setState({ address: event.address });
+        // });
+
+      }
+
+    });
+
+    // Adding vehicles to the local storage
+    // this.saveVehicle([&#039;0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E&#039;, &#039;BMW&#039;, &#039;3 series&#039;, &#039;1&#039;, &#039;London&#039;, {vehicleImg: &#039;images/bmw-3.png&#039;}]);
+    // this.saveVehicle([&#039;&#039;, &#039;Mercedes&#039;, &#039;C Class&#039;, &#039;2&#039;, &#039;Essex&#039;, {vehicleImg: &#039;images/mercedes-c.jpg&#039;}]);
+    // this.saveVehicle([&#039;&#039;, &#039;Audi&#039;, &#039;A7&#039;, &#039;3&#039;, &#039;Uxbridge&#039;, {vehicleImg: &#039;images/audi-a7.jpg&#039;}]);
+    // this.saveVehicle([&#039;&#039;, &#039;VW&#039;, &#039;Polo&#039;, &#039;1&#039;, &#039;Stratford&#039;, {vehicleImg: &#039;images/vw-polo.png&#039;}]);
+
+    // localStorage.setItem(&#039;notifyOwner&#039;, JSON.stringify([]));
+  }
+
+  componentDidUpdate() {
+    this.props.drizzle.contracts.Vehicleshare.events.getVeh().on(&#039;data&#039;, event =&gt; {
+      if (event.address !== this.state.address) {
+        this.saveVehicle(event.returnValues);
+      }
+      this.setState({ address: event.address, isUpdate: true });
+    });
+
+    // this.props.drizzle.contracts.Vehicleshare.events.getRentals().on(&#039;data&#039;, event =&gt; {
+    //   if(event.rentalId !== this.state.rentals) {
+    //     this.getRental(event.returnValues);
+    //   }
+    //   this.setState({rentals: event.rentalId});
+    // });
+
+
+    this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on(&#039;data&#039;, event =&gt; {
+      if (event.rentalId !== this.state.requestId) {
+        this.getRequest(event.returnValues);
+      }
+      this.setState({ requestId: event.rentalId, isUpdate: true });
+    });
+
+    this.props.drizzle.contracts.Vehicleshare.events.notifyDriver().on(&#039;data&#039;, event =&gt; {
+      if (event.rentalId !== this.state.confirmRequestId) {
+        this.getConfirmRequest(event.returnValues);
+      }
+      this.setState({ confirmRequestId: event.rentalId, isUpdate: true });
+
+    });
+
+    if (this.state.isUpdate) {
+      this.setState({
+        isUpdate: false,
+        vehicles: JSON.parse(localStorage.getItem(&#039;vehicles&#039;)),
+        notifications: JSON.parse(localStorage.getItem(&#039;notifyOwner&#039;)),
+        driverNotifications: JSON.parse(localStorage.getItem(&#039;notifyDriver&#039;))
+      });
+    }
+
+    if (this.state.initialLoad) {
+      let getOwnerNotifications = JSON.parse(localStorage.getItem(&#039;notifyOwner&#039;));
+      getOwnerNotifications = getOwnerNotifications.filter(notification =&gt; notification.owner === this.state.drizzleState.accounts[0]);
+
+      let getDriverNotifications = JSON.parse(localStorage.getItem(&#039;notifyDriver&#039;));
+      getDriverNotifications = getDriverNotifications.filter(notification =&gt; notification.owner === this.state.drizzleState.accounts[0]);
+      this.setState({
+        initialLoad: false,
+        notifications: getOwnerNotifications,
+        driverNotifications: getDriverNotifications,
+        isUpdate: true
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  render() {
+
+    if (this.state.loading) return (
+      &lt;div style={style.progress}&gt;
+        &lt;CircularProgress disableShrink /&gt;
+        &lt;Typography variant=&quot;display1&quot;&gt;Loading...&lt;/Typography&gt;
+      &lt;/div&gt;
+    );
+    return (
+      &lt;div className=&quot;App&quot;&gt;
+        &lt;BrowserRouter&gt;
+          &lt;div&gt;
+            &lt;NavBar /&gt;
+            &lt;Route path=&quot;/&quot; exact render={(routeProps) =&gt; (
+              &lt;Home {...routeProps} drizzle={this.props.drizzle}
+                drizzleState={this.state.drizzleState}
+                DateAndTimePickers={this.props.DateAndTimePickers}
+                onModal={this.onModalOpen}
+                vehicles={this.state.vehicles} /&gt;
+            )} /&gt;
+            &lt;Route path=&quot;/registervehicle&quot; exact render={(routeProps) =&gt; (
+              &lt;RegisterVehicle {...routeProps} drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} getNotifications={this.state.notifications} /&gt;
+            )} /&gt;
+            &lt;Route path=&quot;/about&quot; exact render={(routeProps) =&gt; (
+              &lt;About {...routeProps} /&gt;
+            )} /&gt;
+            &lt;Route path=&quot;/ride&quot; exact render={(routeProps) =&gt; (
+              &lt;Ride {...routeProps} notifications={this.state.driverNotifications} drizzle={this.props.drizzle} /&gt;
+            )} /&gt;
+          &lt;/div&gt;
+        &lt;/BrowserRouter&gt;
+        {/* &lt;RegisterVehicle drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} /&gt; */}
+        {/* &lt;Login drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}/&gt; */}
+        {/* &lt;Home 
+        drizzle={this.props.drizzle} 
+        drizzleState={this.state.drizzleState} 
+        DateAndTimePickers={this.props.DateAndTimePickers} 
+        onModal={this.onModalOpen} /&gt; */}
+        {this.viewModal()}
+      &lt;/div&gt;
+    );
+  }
+}
+
+export default App;</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ cyclomatic }} <br>
+    Length : {{ halstead.length }} <br>
+    Difficulty : {{ halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

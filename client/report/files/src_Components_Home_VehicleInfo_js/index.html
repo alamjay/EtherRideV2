@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - src\Components\Home\VehicleInfo.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>src\Components\Home\VehicleInfo.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">66.36</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">174</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">26.32</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">1.41</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">import React from &#039;react&#039;;
+import { Grid, Modal, Typography, Button, TextField } from &#039;@material-ui/core&#039;;
+import PropTypes from &#039;prop-types&#039;;
+import { withStyles } from &#039;@material-ui/core/styles&#039;;
+import pic from &#039;./blank.jpg&#039;;
+
+function getModalStyle() {
+    const top = 50;
+    const left = 50;
+
+    return {
+        top: `${top}%`,
+        left: `${left}%`,
+        transform: `translate(-${top}%, -${left}%)`,
+    };
+}
+
+const styles = theme =&gt; ({
+    root: {
+        flexGrow: 1,
+        backgroundColor: theme.palette.background.paper,
+    },
+    paper: {
+        position: &#039;absolute&#039;,
+        width: theme.spacing.unit * 100,
+        backgroundColor: theme.palette.background.paper,
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing.unit * 4,
+        outline: &#039;none&#039;,
+    }
+});
+
+class VehicleInfo extends React.Component {
+
+    state = {
+        open: false,
+        stackId: null, getHireDataKey: null, getVehicleDataKey: null,
+        startDateTime: null, endDateTime: null, location: &#039;&#039;, cost: null,
+        vehicle: &#039;0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E&#039;
+    };
+
+    componentDidMount() {
+        const { drizzle, drizzleState } = this.props;
+        const contract = drizzle.contracts.Vehicleshare;
+        const getHireDataKey = contract.methods[&quot;getHire&quot;].cacheCall(drizzleState.accounts[0]);
+        const getVehicleDataKey = contract.methods[&quot;getVehicle&quot;].cacheCall(drizzleState.accounts[0]);
+        this.setState({ getHireDataKey });
+        this.setState({ getVehicleDataKey });
+        // this.setState({ open: true });
+        
+        // console.log(drizzle.web3.sendTransaction({ from: drizzleState.accounts[0], to: contract.address, value: 200000000}));
+        console.log(contract.address);
+        console.log(drizzle.web3.eth.getBalance(contract.address));
+    }
+    
+    // UNSAFE_componentWillReceiveProps(newProps) {
+    //     this.setState({ open: newProps.requestModal });
+    // }
+
+    // handleOpen = () =&gt; {
+    //     console.log(this.props.requestModal);
+    //     this.setState({ open: this.props.requestModal });
+    // };
+
+    handleClose = () =&gt; {
+        // this.setState({ open: false });
+        this.props.requestModal(false);
+    };
+
+    handleChange = e =&gt; {
+        this.setState({ [e.target.id]: e.target.value });
+    }
+
+    onCheckout = async e =&gt; {
+        e.preventDefault();
+        const { drizzle, drizzleState } = this.props;
+        const contract = drizzle.contracts.Vehicleshare;
+
+        const price = this.props.vehicleData.price; //hourly rate
+        const cost = ((new Date(this.state.endDateTime) - new Date(this.state.startDateTime)) / 3600000) * price; // convert into hours
+        const amountSend = drizzle.web3.utils.toWei(cost.toString(), &#039;ether&#039;);
+
+        contract.methods[&quot;setHire&quot;].cacheSend(
+            drizzleState.accounts[0],
+            this.state.startDateTime,
+            this.state.endDateTime,
+            { from: drizzleState.accounts[0], value: amountSend } // work out how to add value to payable method
+        );
+
+        // contract.methods[&quot;makePayment&quot;].cacheSend(
+        //     drizzleState.accounts[0],
+        //     {value: amountSend }
+        // );
+
+    }
+
+    getCost() {
+        if(this.state.startDateTime !== null &amp;&amp; this.state.endDateTime !== null) {
+            const price = this.props.vehicleData.price;
+            const cost = ((new Date(this.state.endDateTime) - new Date(this.state.startDateTime)) / 3600000) * price; // convert into hours
+            return cost.toFixed(3) + &quot; eth&quot;;
+        }
+    }
+
+    render() {
+        const { classes } = this.props;
+        const title = this.props.vehicleData.make + &#039; &#039; + this.props.vehicleData.model;
+        const location = this.props.vehicleData.location;
+
+        // const { Vehicleshare } = this.props.drizzleState.contracts;
+        // const getHire = Vehicleshare.getHire[this.state.getHireDataKey];
+        // if(getHire !== undefined) {
+        //     console.log(getHire &amp;&amp; getHire.value);
+        // }
+
+        return (
+            &lt;div className={classes.root}&gt;
+                {/* &lt;Button onClick={this.handleOpen}&gt;Open Modal&lt;/Button&gt; */}
+                &lt;Modal
+                    aria-labelledby=&quot;simple-modal-title&quot;
+                    aria-describedby=&quot;simple-modal-description&quot;
+                    open={this.props.openModal}
+                    onClose={this.handleClose}
+                    style={{ alignItems: &#039;center&#039;, justifyContent: &#039;center&#039; }}
+                &gt;
+                    {/* &lt;Slide direction=&quot;up&quot; in={this.state.open} mountOnEnter unmountOnExit&gt; */}
+                    &lt;div style={getModalStyle()} className={classes.paper}&gt;
+                        &lt;Grid container&gt;
+                            &lt;Grid item sm={8}&gt;
+                                &lt;Typography variant=&quot;title&quot;&gt;{title}&lt;/Typography&gt;
+                                &lt;img src={pic} alt=&quot;&quot;&gt;&lt;/img&gt;
+                                &lt;Typography variant=&quot;display1&quot;&gt;{location}&lt;/Typography&gt;
+                                &lt;Typography&gt;&lt;/Typography&gt;
+                            &lt;/Grid&gt;
+                            &lt;Grid item sm={3}&gt;
+                                &lt;form onSubmit={this.onCheckout}&gt;
+                                    &lt;TextField
+                                        id=&quot;startDateTime&quot;
+                                        label=&quot;Start Date&quot;
+                                        type=&quot;datetime-local&quot;
+                                        defaultValue=&quot;2019-02-07T10:30&quot;
+                                        className={this.props.dateAndTimePicker}
+                                        InputLabelProps={{ shrink: true, }}
+                                        onChange={this.handleChange}
+                                    /&gt;
+                                    &lt;TextField
+                                        id=&quot;endDateTime&quot;
+                                        label=&quot;End Date&quot;
+                                        type=&quot;datetime-local&quot;
+                                        defaultValue=&quot;2019-02-07T11:30&quot;
+                                        className={this.props.dateAndTimePicker}
+                                        InputLabelProps={{ shrink: true, }}
+                                        onChange={this.handleChange}
+                                    /&gt;
+                                    &lt;Typography variant=&quot;display1&quot; &gt;{this.getCost()}&lt;/Typography&gt;
+                                    &lt;Button  onClick={this.onCheckout}&gt;Checkout&lt;/Button&gt;
+                                &lt;/form&gt;
+                            &lt;/Grid&gt;
+                        &lt;/Grid&gt;
+                    &lt;/div&gt;
+                    {/* &lt;/Slide&gt; */}
+
+                &lt;/Modal&gt;
+
+            &lt;/div&gt;
+        );
+    }
+}
+
+VehicleInfo.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(VehicleInfo);</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ cyclomatic }} <br>
+    Length : {{ halstead.length }} <br>
+    Difficulty : {{ halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

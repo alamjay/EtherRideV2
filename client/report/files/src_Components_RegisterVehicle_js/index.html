@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - src\Components\RegisterVehicle.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>src\Components\RegisterVehicle.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">69.79</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">198</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">30.16</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">1.27</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">import React from &quot;react&quot;;
+import { TextField, Typography, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Paper } from &quot;@material-ui/core&quot;;
+import ExpandMoreIcon from &#039;@material-ui/icons/ExpandMore&#039;;
+import Request from &#039;./Request&#039;;
+
+const style = {
+    container: { paddingLeft: 200, paddingRight: 200, margin: &#039;auto&#039; },
+    leftDiv: { display: &#039;inline-block&#039;, maxWidth: &#039;300&#039;, verticalAlign: &#039;top&#039; },
+    rightDiv: { display: &#039;inline-block&#039;, maxWidth: &#039;150&#039; },
+    inlineDiv: { marginTop: 50 },
+    wrapper: { marginTop: 10 },
+    form: {
+        position: &quot;absolute&quot;,
+        left: &quot;50%&quot;,
+        top: &quot;50%&quot;,
+        transform: &quot;translate(-50%, -50%)&quot;
+    },
+    textField: {
+        marginTop: 5
+    }
+}
+
+class RegisterVehicle extends React.Component { // Call it list car?
+    state = {
+        owner: null, make: &#039;&#039;, model: &#039;&#039;, price: 0, location: &#039;&#039;,
+        stackId: null, dataKey: null, registered: false, registeredKey: null,
+        request: null, notifications: this.props.getNotifications, address: null
+    };
+
+    componentDidMount() {
+        const { drizzle, drizzleState } = this.props;
+        const contract = drizzle.contracts.Vehicleshare;
+        // const dataKey = contract.methods[&quot;getVehicle&quot;].cacheCall(drizzleState.accounts[0]);
+        const registeredKey = contract.methods[&quot;isRegistered&quot;].cacheCall(drizzleState.accounts[0]);
+
+        // this.setState({ dataKey });
+        this.setState({ registeredKey });
+
+    }
+
+    componentDidUpdate() {
+        // if (isReg !== this.state.registered &amp;&amp; isReg) {
+        // this.setState({ registered: true });
+        // }
+        // this.props.drizzle.contracts.Vehicleshare.events.notifyOwner().on(&#039;data&#039;, event =&gt; {
+        //     if (event.address !== this.state.address) {
+        //         this.getRequest(event.returnValues);
+        //     }
+        //     this.setState({ address: event.address });
+        // });
+    }
+
+    // getRequest = data =&gt; {
+    //     const request = { rentalId: null, from: &#039;&#039;, startDate: &#039;&#039;, endDate: &#039;&#039; };
+    //     request.rentalId = data.rentalId;
+    //     request.from = data.driver;
+    //     request.startDate = data.start_date_time;
+    //     request.endDate = data.end_date_time;
+    //     // const request = { rentalId: 1, from: &#039;0x886BA5E2B9025f6378D0A9Eafd256a20D1884d8E&#039;, startDate: &#039;19/02/2019 10:30&#039;, endDate: &#039;19/02/2019 11:30&#039; };
+    //     if(request.rentalId !== null) {
+    //         this.state.notifications.push({ request });
+    //     }
+    // }   
+
+    handleChange = e =&gt; {
+        this.setState({ [e.target.id]: e.target.value });
+    }
+
+    handleSubmit = async e =&gt; {
+        e.preventDefault();
+        const { drizzle, drizzleState } = this.props;
+        const contract = drizzle.contracts.Vehicleshare;
+
+        const stackId = contract.methods[&quot;setVehicle&quot;].cacheSend(
+            this.state.make,
+            this.state.model,
+            this.state.price,
+            this.state.location,
+            { from: drizzleState.accounts[0] }
+        );
+        this.setState({ stackId });
+    }
+
+    register() {
+        return (
+            null
+        );
+    }
+
+    showRequests = () =&gt; {
+        const show = [];
+        // console.log(this.state.notifications);
+        // if(this.state.notifications.length &gt; 0) {
+            for (let i = 0; i &lt; this.state.notifications.length; i++) {
+                show.push(&lt;Request key={i} requestData={this.state.notifications[i]} drizzle={this.props.drizzle } drizzleState={this.props.drizzleState} requestComponent={true} /&gt;);
+            }   
+        // }
+        return ( show.length !==0 ? show : &lt;Paper&gt;&lt;Typography variant=&quot;title&quot;&gt;No requests yet&lt;/Typography&gt;&lt;/Paper&gt; );
+    }
+
+    render() {
+        const { Vehicleshare } = this.props.drizzleState.contracts;
+        let isReg = Vehicleshare.isRegistered[this.state.registeredKey];
+
+        if (isReg === undefined) {
+            return &lt;div&gt;Loading...&lt;/div&gt;
+        }
+
+        if(!isReg.value) { // verify from local storage vehicle is registered
+            const vehicles = JSON.parse(localStorage.getItem(&#039;vehicles&#039;));
+            const checkVehicle = vehicles.find(vehicle =&gt; vehicle.id === isReg.args[0]);
+            isReg.value = checkVehicle ? true : false;    
+        }
+
+        if (isReg.value === false) { // Check to see whether the user already registered the car
+
+            // if(true) { // Testing
+            // console.log(isReg.args[0]);
+            return (
+                // &lt;Button&gt;Register My Vehicle&lt;/Button&gt;
+                
+                &lt;form
+                    onSubmit={this.handleSubmit}
+                    style={style.form}
+                &gt;
+                &lt;Grid container spacing={16}&gt;
+                    {/* &lt;Typography&gt;Enter the vehicle make: &lt;/Typography&gt; */}
+                    &lt;Grid item xs={12}&gt;
+                    &lt;TextField id=&quot;make&quot; onChange={this.handleChange} label=&quot;Enter the vehicle make&quot; style={style.textField}/&gt;
+                    &lt;/Grid&gt;
+                    &lt;Grid item xs={12}&gt;
+                    {/* &lt;Typography&gt;Enter the model:  &lt;/Typography&gt; */}
+                    &lt;TextField id=&quot;model&quot; onChange={this.handleChange} label=&quot;Enter the model&quot; style={style.textField}/&gt;
+                    &lt;/Grid&gt;
+                    &lt;Grid item xs={12}&gt;
+                    {/* &lt;Typography&gt;Specify the price: &lt;/Typography&gt; */}
+                    &lt;TextField type=&quot;number&quot; id=&quot;price&quot; onChange={this.handleChange} label=&quot;Specify the price (ETH)&quot; style={style.textField}/&gt;
+                    &lt;/Grid&gt;
+                    &lt;Grid item xs={12}&gt;
+                    {/* &lt;Typography&gt;Enter the location&lt;/Typography&gt; */}
+                    &lt;TextField id=&quot;location&quot; onChange={this.handleChange} label=&quot;Enter the location&quot; style={style.textField} /&gt;
+                    &lt;/Grid&gt;
+                    &lt;Grid item xs={12} style={style.textField}&gt;
+                    &lt;Button type=&quot;submit&quot;&gt;Submit&lt;/Button&gt;
+                    &lt;/Grid&gt;
+                    &lt;/Grid&gt;
+                &lt;/form&gt;
+            );
+        }
+        else {
+            return (
+                &lt;div style={style.container}&gt;
+                    &lt;Grid style={style.inlineDiv}&gt;
+
+                        &lt;Typography variant=&quot;display1&quot;&gt;Requests&lt;/Typography&gt;
+                        {this.showRequests()}
+                        {/* &lt;Request/&gt; */}
+                    &lt;/Grid&gt;
+                    &lt;Grid style={style.inlineDiv}&gt;
+
+                        &lt;Typography variant=&quot;display1&quot;&gt;Manage Vehicle&lt;/Typography&gt;
+                        &lt;ExpansionPanel style={style.wrapper}&gt;
+                            &lt;ExpansionPanelSummary expandIcon={&lt;ExpandMoreIcon /&gt;}&gt;
+                                &lt;Typography variant=&quot;subheading&quot;&gt;Change My Vehicle&lt;/Typography&gt;
+                            &lt;/ExpansionPanelSummary&gt;
+                            &lt;ExpansionPanelDetails&gt;
+                                &lt;form
+                                    onSubmit={this.handleSubmit}&gt;
+                                    &lt;Typography&gt;Enter the vehicle make: &lt;/Typography&gt;
+                                    &lt;TextField id=&quot;make&quot; onChange={this.handleChange} /&gt;
+
+                                    &lt;Typography&gt;Enter the model:  &lt;/Typography&gt;
+                                    &lt;TextField id=&quot;model&quot; onChange={this.handleChange} /&gt;
+
+                                    &lt;Typography&gt;Specify the price: &lt;/Typography&gt;
+                                    &lt;TextField type=&quot;number&quot; id=&quot;price&quot; onChange={this.handleChange} /&gt;
+                                    &lt;Button type=&quot;submit&quot;&gt;Submit&lt;/Button&gt;
+                                &lt;/form&gt;
+                            &lt;/ExpansionPanelDetails&gt;
+                        &lt;/ExpansionPanel&gt;
+                        &lt;ExpansionPanel&gt;
+                            &lt;ExpansionPanelSummary expandIcon={&lt;ExpandMoreIcon /&gt;}&gt;
+                                &lt;Typography variant=&quot;subheading&quot;&gt;Change Location&lt;/Typography&gt;
+                            &lt;/ExpansionPanelSummary&gt;
+                            &lt;ExpansionPanelDetails&gt;
+                                &lt;Typography&gt;Enter the location&lt;/Typography&gt;
+                                &lt;TextField id=&quot;location&quot; onChange={this.handleChange} /&gt;
+                            &lt;/ExpansionPanelDetails&gt;
+                        &lt;/ExpansionPanel&gt;
+                    &lt;/Grid&gt;
+
+                &lt;/div&gt;
+            );
+        }
+    }
+}
+
+export default RegisterVehicle;</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ cyclomatic }} <br>
+    Length : {{ halstead.length }} <br>
+    Difficulty : {{ halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
