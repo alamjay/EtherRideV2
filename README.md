@@ -6,27 +6,27 @@ This project was built with [Create React App](https://github.com/facebook/creat
 
 ## Setup
 
-Before running the web application, you will need the following:
-    1. Ganache                      https://truffleframework.com/ganache
-    2. Metamask extension           https://metamask.io/
-    3. Node package Manager         https://nodejs.org/en/
-    4. Truffle (if not installed)   https://truffleframework.com/
-    5. Run in Linux environment
+Before running the web application, you will need the following: <br>
+       1. Ganache                      https://truffleframework.com/ganache <br>
+       2. Metamask extension           https://metamask.io/ <br>
+       3. Node package Manager         https://nodejs.org/en/ <br>
+       4. Truffle (if not installed)   https://truffleframework.com/ <br>
+       5. Run in Linux environment <br>
 
 ## Instruction
 
-Once this repo has been cloned run the following:
-    1. open ganache
-    2. navigate to the project directory and open a command line
-    2. run 'npm install'
-    3. run the following commands:
-        a. truffle compile
-        b. truffle migrate --reset
-        c. cd client/src
-        d. rm -r contract (delete contract folder)
-        e. cd ..
-        f. npm start
-    4. open browser and run http://localhost:3000
+Once this repo has been cloned run the following: <br>
+       1. open ganache <br>
+       2. navigate to the project directory and open a command line <br>
+       3. run 'npm install' <br>
+       4. run the following commands: <br>
+              a. truffle compile <br>
+              b. truffle migrate --reset <br>
+              c. cd client/src <br>
+              d. rm -r contract (delete contract folder) <br>
+              e. cd .. <br>
+              f. npm start <br>
+       5. open browser and run http://localhost:3000 <br>
 
 ## Available Scripts
 
